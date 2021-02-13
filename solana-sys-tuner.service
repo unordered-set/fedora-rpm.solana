@@ -5,7 +5,7 @@ Description=Solana cluster system tuner daemon (__SUFFIX__)
 WantedBy=multi-user.target
 
 [Service]
-Environment="PATH=/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+Environment="RUST_LOG=info" "PATH=/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
 
 Type=simple
 User=root

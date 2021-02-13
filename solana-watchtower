@@ -1,0 +1,14 @@
+PATH="/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+
+# Logging configuration.
+RUST_LOG="info"
+
+# Notification settings.
+#SLACK_WEBHOOK=...
+#DISCORD_WEBHOOK=...
+#TELEGRAM_BOT_TOKEN=...
+#TELEGRAM_CHAT_ID=...
+#TWILIO_CONFIG='ACCOUNT=<account>,TOKEN=<securityToken>,TO=<receivingNumber>,FROM=<sendingNumber>'
+
+# Command line options for solana-watchtower.
+SERVICE_OPTS="--config /etc/solana/__SUFFIX__/cli-config.yml"
