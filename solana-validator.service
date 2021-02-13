@@ -1,0 +1,28 @@
+[Unit]
+Description=Solana Validator node daemon (__SUFFIX__)
+
+Wants=network-online.target
+After=network-online.target
+After=time-sync.target
+
+StartLimitIntervalSec=0
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+EnvironmentFile=-/etc/sysconfig/solana-validator-__SUFFIX__
+
+Type=simple
+User=solana-__SUFFIX__
+Group=solana-__SUFFIX__
+
+LimitNOFILE=1024000
+LogRateLimitIntervalSec=0
+
+ExecStart=/opt/solana/__SUFFIX__/bin/solana-validator \
+        $SERVICE_OPTS \
+        --log -
+
+Restart=always
+RestartSec=1

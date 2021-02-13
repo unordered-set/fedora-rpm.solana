@@ -1,0 +1,17 @@
+[Unit]
+Description=Solana cluster system tuner daemon (__SUFFIX__)
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Environment="PATH=/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin"
+
+Type=simple
+User=root
+Group=root
+
+ExecStart=/opt/solana/__SUFFIX__/bin/solana-sys-tuner --user solana-__SUFFIX__
+
+Restart=always
+RestartSec=1
