@@ -7,4 +7,8 @@ RUST_LOG="info"
 SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=tds,u=testnet_write,p=c4fa841aa918bf8274e3e2a44d77568d9861b3ea"
 
 # Command line options for solana-validator on Testnet.
-SERVICE_OPTS="--ledger /var/lib/solana/__SUFFIX__/ledger --entrypoint entrypoint.testnet.solana.com:8001"
+SERVICE_OPTS="
+    --ledger /var/lib/solana/__SUFFIX__/ledger
+    --entrypoint entrypoint.testnet.solana.com:8001
+    --log -
+"

@@ -7,7 +7,7 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-Version:    1.5.7
+Version:    1.5.8
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -15,7 +15,7 @@ License:    Apache-2.0
 URL:        https://github.com/solana-labs/solana/
 Source0:    https://github.com/solana-labs/solana/archive/v%{version}/solana-%{version}.tar.gz
 
-# cargo vendor --locked
+# cargo vendor --offline
 Source1:    solana-%{version}.cargo-vendor.tar.xz
 Source2:    config.toml
 
@@ -278,5 +278,8 @@ exit 0
 
 
 %changelog
+* Wed Feb 17 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-1
+- Update to 1.5.8
+
 * Sat Feb 13 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.7-1
 - Initial packaging
