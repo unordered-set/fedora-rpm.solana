@@ -223,10 +223,15 @@ mv target/release/* \
 
 
 %files common
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
 /opt/solana/%{solana_suffix}/activate
 
 
 %files cli
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
+%dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana
 /opt/solana/%{solana_suffix}/bin/solana-gossip
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
@@ -237,6 +242,9 @@ mv target/release/* \
 
 
 %files utils
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
+%dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana-csv-to-validator-infos
 /opt/solana/%{solana_suffix}/bin/solana-keygen
 /opt/solana/%{solana_suffix}/bin/solana-log-analyzer
@@ -248,6 +256,10 @@ mv target/release/* \
 
 
 %files deps
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
+%dir /opt/solana/%{solana_suffix}/bin
+%dir /opt/solana/%{solana_suffix}/bin/deps
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_budget_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_failure_program.so
@@ -255,6 +267,9 @@ mv target/release/* \
 
 
 %files daemons
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
+%dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana-faucet
 /opt/solana/%{solana_suffix}/bin/solana-ip-address-server
 /opt/solana/%{solana_suffix}/bin/solana-sys-tuner
@@ -267,16 +282,25 @@ mv target/release/* \
 %attr(0640,root,%{solana_group}) %config(noreplace) %{_sysconfdir}/sysconfig/solana-validator-%{solana_suffix}
 %attr(0640,root,%{solana_group}) %config(noreplace) %{_sysconfdir}/sysconfig/solana-watchtower-%{solana_suffix}
 
+%attr(0755,root,root) %dir %{_sysconfdir}/solana
 %attr(0750,root,%{solana_group}) %dir %{solana_etc}
+
+%attr(0755,root,root) %dir %{_localstatedir}/lib/solana
 %attr(0750,%{solana_user},%{solana_group}) %dir %{solana_home}
 
 
 %files bpf-utils
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
+%dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/cargo-build-bpf
 /opt/solana/%{solana_suffix}/bin/cargo-test-bpf
 
 
 %files tests
+%dir /opt/solana
+%dir /opt/solana/%{solana_suffix}
+%dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana-accounts-bench
 /opt/solana/%{solana_suffix}/bin/solana-banking-bench
 /opt/solana/%{solana_suffix}/bin/solana-bench-exchange
