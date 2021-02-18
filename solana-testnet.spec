@@ -8,7 +8,7 @@
 Name:       solana-%{solana_suffix}
 Epoch:      0
 Version:    1.5.8
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -341,6 +341,11 @@ exit 0
 
 
 %changelog
+* Thu Feb 18 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-2
+- Replace bundled C/C++ libraries with system provided
+- Enable LTO and debug info in release profile
+- Add directories
+
 * Wed Feb 17 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-1
 - Update to 1.5.8
 
