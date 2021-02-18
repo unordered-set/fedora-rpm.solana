@@ -29,6 +29,7 @@ Source8:    solana-watchtower
 Source100:  filter-cargo-checksum
 
 Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
+Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
 
 ExclusiveArch:  %{rust_arches}
 

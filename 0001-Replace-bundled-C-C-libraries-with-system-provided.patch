@@ -1,7 +1,7 @@
 From 24a736e3775b2947cfe077639b215716c444d69f Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 17:17:32 +0500
-Subject: [PATCH] Replace bundled C/C++ libraries with system provided
+Subject: [PATCH 1/2] Replace bundled C/C++ libraries with system provided
 
 ---
  remote-wallet/Cargo.toml | 2 +-

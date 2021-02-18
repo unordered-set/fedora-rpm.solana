@@ -1,0 +1,26 @@
+From b07c2dcb1566cd64bb508cd21354cc531051c989 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Thu, 18 Feb 2021 20:10:01 +0500
+Subject: [PATCH 2/2] Enable LTO and debug info in release profile
+
+---
+ Cargo.toml | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index ac1b1a57b73c..1d23594d7472 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -76,3 +76,9 @@ members = [
+ exclude = [
+     "programs/bpf",
+ ]
++
++[profile.release]
++opt-level = 3
++debug = true
++lto = "fat"
++codegen-units = 1
+-- 
+2.29.2
+
