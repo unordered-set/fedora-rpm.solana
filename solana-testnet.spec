@@ -26,7 +26,14 @@ Source6:    solana-sys-tuner.service
 Source7:    solana-watchtower.service
 Source8:    solana-watchtower
 
+Source100:  filter-cargo-checksum
+
+Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
+
 ExclusiveArch:  %{rust_arches}
+
+%global python python3
+BuildRequires:  %{python}
 
 BuildRequires:  rust-packaging
 BuildRequires:  systemd-rpm-macros
@@ -36,6 +43,12 @@ BuildRequires:  make
 BuildRequires:  pkgconf-pkg-config
 BuildRequires:  openssl-devel
 BuildRequires:  zlib-devel
+BuildRequires:  bzip2-devel
+BuildRequires:  lz4-devel
+BuildRequires:  hidapi-devel
+BuildRequires:  jemalloc-devel
+BuildRequires:  rocksdb-devel
+# TODO: Unbundle zstd.
 
 # libudev-devel
 BuildRequires:  systemd-devel
@@ -118,14 +131,39 @@ Solana tests and benchmarks (%{solana_suffix} version).
 
 
 %prep
-%autosetup -b0 -n solana-%{version}
-%autosetup -N -b1 -n solana-%{version}
+%autosetup -p1 -b0 -n solana-%{version}
+%autosetup -p1 -b1 -n solana-%{version}
+
+# Remove bundled C/C++ source code.
+rm -r vendor/bzip2-sys/bzip2-*
+%{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
+rm -r vendor/hidapi/etc/hidapi
+%{python} %{SOURCE100} vendor/hidapi '^etc/hidapi/.*'
+rm -r vendor/jemalloc-sys/jemalloc
+rm -r vendor/jemalloc-sys/rep
+%{python} %{SOURCE100} vendor/jemalloc-sys '^jemalloc/.*' '^rep/.*'
+rm -r vendor/librocksdb-sys/bzip2
+rm -r vendor/librocksdb-sys/lz4
+rm -r vendor/librocksdb-sys/rocksdb
+rm -r vendor/librocksdb-sys/zlib
+rm -r vendor/librocksdb-sys/zstd
+%{python} %{SOURCE100} vendor/librocksdb-sys \
+        '^bzip2/.*' \
+        '^lz4/.*' \
+        '^rocksdb/.*' \
+        '^zlib/.*' \
+        '^zstd/.*'
 
 mkdir .cargo
 cp %{SOURCE2} .cargo/
 
 
 %build
+export JEMALLOC_OVERRIDE=%{_libdir}/libjemalloc.so
+export ROCKSDB_INCLUDE_DIR=%{_includedir}
+export ROCKSDB_LIB_DIR=%{_libdir}
+export LZ4_INCLUDE_DIR=%{_includedir}
+export LZ4_LIB_DIR=%{_libdir}
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
 
 sed 's,__SUFFIX__,%{solana_suffix},g' \

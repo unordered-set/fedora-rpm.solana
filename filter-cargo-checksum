@@ -1,0 +1,26 @@
+#!/usr/bin/python3
+
+import json
+import os.path
+import re
+import sys
+
+
+def _main():
+    json_path = os.path.join(sys.argv[1], '.cargo-checksum.json')
+
+    with open(json_path, 'r') as json_f:
+        csums = json.load(json_f)
+
+    regexs = [re.compile(s) for s in sys.argv[2:]]
+
+    csums['files'] = dict(
+            (fp, fc)
+            for fp, fc in csums['files'].items()
+            if all(r.match(fp) is None for r in regexs))
+
+    with open(json_path, 'w') as json_f:
+        json.dump(csums, json_f)
+
+
+_main()

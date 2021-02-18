@@ -1,0 +1,25 @@
+From 24a736e3775b2947cfe077639b215716c444d69f Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Thu, 18 Feb 2021 17:17:32 +0500
+Subject: [PATCH] Replace bundled C/C++ libraries with system provided
+
+---
+ remote-wallet/Cargo.toml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/remote-wallet/Cargo.toml b/remote-wallet/Cargo.toml
+index dab86bc9a233..78d40635adba 100644
+--- a/remote-wallet/Cargo.toml
++++ b/remote-wallet/Cargo.toml
+@@ -23,7 +23,7 @@ thiserror = "1.0"
+ url = "2.1.1"
+ 
+ [features]
+-default = ["linux-static-hidraw"]
++default = ["linux-shared-hidraw"]
+ linux-static-libusb = ["hidapi/linux-static-libusb"]
+ linux-static-hidraw = ["hidapi/linux-static-hidraw"]
+ linux-shared-libusb = ["hidapi/linux-shared-libusb"]
+-- 
+2.29.2
+
