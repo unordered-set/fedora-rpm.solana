@@ -11,4 +11,6 @@ RUST_LOG="info"
 #TWILIO_CONFIG='ACCOUNT=<account>,TOKEN=<securityToken>,TO=<receivingNumber>,FROM=<sendingNumber>'
 
 # Command line options for solana-watchtower.
-SERVICE_OPTS="--config /etc/solana/__SUFFIX__/cli-config.yml"
+SERVICE_OPTS="
+    --config /etc/solana/__SUFFIX__/cli-config.yml
+"
