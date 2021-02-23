@@ -8,7 +8,7 @@
 Name:       solana-%{solana_suffix}
 Epoch:      0
 Version:    1.5.8
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -167,6 +167,10 @@ export ROCKSDB_INCLUDE_DIR=%{_includedir}
 export ROCKSDB_LIB_DIR=%{_libdir}
 export LZ4_INCLUDE_DIR=%{_includedir}
 export LZ4_LIB_DIR=%{_libdir}
+
+# Optimize for oldest CPU still in use (by me).
+# Available CPUs and features: `llc -march=x86-64 -mattr=help`.
+export RUSTFLAGS='-C target-cpu=ivybridge'
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
 
 sed 's,__SUFFIX__,%{solana_suffix},g' \
@@ -343,6 +347,10 @@ exit 0
 
 
 %changelog
+* Wed Feb 24 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-3
+- Unbundle zstd
+- Enable optimizations for newer CPUs
+
 * Thu Feb 18 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-2
 - Replace bundled C/C++ libraries with system provided
 - Enable LTO and debug info in release profile
