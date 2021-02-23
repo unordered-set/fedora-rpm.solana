@@ -20,7 +20,7 @@ Group=solana-__SUFFIX__
 LimitNOFILE=1024000
 LogRateLimitIntervalSec=0
 
-ExecStart=/opt/solana/__SUFFIX__/bin/solana-validator $SERVICE_OPTS
+ExecStart=/opt/solana/__SUFFIX__/bin/solana-validator $SERVICE_OPTS run
 
 Restart=always
 RestartSec=1
