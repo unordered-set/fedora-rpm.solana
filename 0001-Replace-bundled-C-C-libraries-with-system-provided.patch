@@ -1,12 +1,101 @@
-From 24a736e3775b2947cfe077639b215716c444d69f Mon Sep 17 00:00:00 2001
+From a763f30c98b9014e65b68367f34612079f5349bc Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 17:17:32 +0500
 Subject: [PATCH 1/2] Replace bundled C/C++ libraries with system provided
 
 ---
- remote-wallet/Cargo.toml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Cargo.lock                  | 21 +++++++++++++++------
+ account-decoder/Cargo.toml  |  2 +-
+ remote-wallet/Cargo.toml    |  2 +-
+ runtime/Cargo.toml          |  2 +-
+ storage-bigtable/Cargo.toml |  2 +-
+ 5 files changed, 19 insertions(+), 10 deletions(-)
 
+diff --git a/Cargo.lock b/Cargo.lock
+index 70c1a740cff3..d46c7a069173 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -3038,6 +3038,12 @@ dependencies = [
+  "getrandom 0.1.14",
+ ]
+ 
++[[package]]
++name = "rand_core"
++version = "0.6.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "34cf66eb183df1c5876e2dcf6b13d57340741e8dc255b48e40a26de954d06ae7"
++
+ [[package]]
+ name = "rand_hc"
+ version = "0.1.0"
+@@ -3894,6 +3900,7 @@ dependencies = [
+  "num-derive",
+  "num-traits",
+  "rand 0.7.3",
++ "rand_core 0.6.2",
+  "rustversion",
+  "solana-runtime",
+  "solana-sdk",
+@@ -4067,6 +4074,7 @@ dependencies = [
+  "bincode",
+  "chrono",
+  "log 0.4.11",
++ "rand_core 0.6.2",
+  "serde",
+  "serde_derive",
+  "solana-logger 1.5.8",
+@@ -6843,18 +6851,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "zstd"
+-version = "0.5.3+zstd.1.4.5"
++version = "0.5.4+zstd.1.4.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "01b32eaf771efa709e8308605bbf9319bf485dc1503179ec0469b611937c0cd8"
++checksum = "69996ebdb1ba8b1517f61387a883857818a66c8a295f487b1ffd8fd9d2c82910"
+ dependencies = [
+  "zstd-safe",
+ ]
+ 
+ [[package]]
+ name = "zstd-safe"
+-version = "2.0.5+zstd.1.4.5"
++version = "2.0.6+zstd.1.4.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1cfb642e0d27f64729a639c52db457e0ae906e7bc6f5fe8f5c453230400f1055"
++checksum = "98aa931fb69ecee256d44589d19754e61851ae4769bf963b385119b1cc37a49e"
+ dependencies = [
+  "libc",
+  "zstd-sys",
+@@ -6862,12 +6870,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "zstd-sys"
+-version = "1.4.17+zstd.1.4.5"
++version = "1.4.18+zstd.1.4.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "b89249644df056b522696b1bb9e7c18c87e8ffa3e2f0dc3b0155875d6498f01b"
++checksum = "a1e6e8778706838f43f771d80d37787cb2fe06dafe89dd3aebaf6721b9eaec81"
+ dependencies = [
+  "cc",
+  "glob",
+  "itertools 0.9.0",
+  "libc",
++ "pkg-config",
+ ]
+diff --git a/account-decoder/Cargo.toml b/account-decoder/Cargo.toml
+index 3ad4619d17be..7f67b98b464d 100644
+--- a/account-decoder/Cargo.toml
++++ b/account-decoder/Cargo.toml
+@@ -24,7 +24,7 @@ solana-stake-program = { path = "../programs/stake", version = "1.5.8" }
+ solana-vote-program = { path = "../programs/vote", version = "1.5.8" }
+ spl-token-v2-0 = { package = "spl-token", version = "=3.0.1", features = ["no-entrypoint"] }
+ thiserror = "1.0"
+-zstd = "0.5.1"
++zstd = { version = "0.5.4", features = ["pkg-config"] }
+ 
+ [package.metadata.docs.rs]
+ targets = ["x86_64-unknown-linux-gnu"]
 diff --git a/remote-wallet/Cargo.toml b/remote-wallet/Cargo.toml
 index dab86bc9a233..78d40635adba 100644
 --- a/remote-wallet/Cargo.toml
@@ -20,6 +109,32 @@ index dab86bc9a233..78d40635adba 100644
  linux-static-libusb = ["hidapi/linux-static-libusb"]
  linux-static-hidraw = ["hidapi/linux-static-hidraw"]
  linux-shared-libusb = ["hidapi/linux-shared-libusb"]
+diff --git a/runtime/Cargo.toml b/runtime/Cargo.toml
+index 69353a71b48e..84f0aac81b44 100644
+--- a/runtime/Cargo.toml
++++ b/runtime/Cargo.toml
+@@ -50,7 +50,7 @@ symlink = "0.1.0"
+ tar = "0.4.28"
+ tempfile = "3.1.0"
+ thiserror = "1.0"
+-zstd = "0.5.1"
++zstd = { version = "0.5.4", features = ["pkg-config"] }
+ 
+ [lib]
+ crate-type = ["lib"]
+diff --git a/storage-bigtable/Cargo.toml b/storage-bigtable/Cargo.toml
+index 61a31e31f48a..8cc73959ae59 100644
+--- a/storage-bigtable/Cargo.toml
++++ b/storage-bigtable/Cargo.toml
+@@ -28,7 +28,7 @@ solana-transaction-status = { path = "../transaction-status", version = "1.5.8"
+ thiserror = "1.0"
+ futures = "0.3.8"
+ tonic = {version="0.3.0", features = ["tls", "transport"]}
+-zstd = "0.5.1"
++zstd = { version = "0.5.4", features = ["pkg-config"] }
+ 
+ [lib]
+ crate-type = ["lib"]
 -- 
 2.29.2
 

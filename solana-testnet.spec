@@ -49,7 +49,7 @@ BuildRequires:  lz4-devel
 BuildRequires:  hidapi-devel
 BuildRequires:  jemalloc-devel
 BuildRequires:  rocksdb-devel
-# TODO: Unbundle zstd.
+BuildRequires:  libzstd-devel
 
 # libudev-devel
 BuildRequires:  systemd-devel
@@ -154,6 +154,8 @@ rm -r vendor/librocksdb-sys/zstd
         '^rocksdb/.*' \
         '^zlib/.*' \
         '^zstd/.*'
+rm -r vendor/zstd-sys/zstd
+%{python} %{SOURCE100} vendor/zstd-sys '^zstd/.*'
 
 mkdir .cargo
 cp %{SOURCE2} .cargo/
