@@ -7,15 +7,15 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-Version:    1.5.8
-Release:    3%{?dist}
+Version:    1.5.10
+Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
 URL:        https://github.com/solana-labs/solana/
 Source0:    https://github.com/solana-labs/solana/archive/v%{version}/solana-%{version}.tar.gz
 
-# cargo vendor --offline
+# cargo vendor
 Source1:    solana-%{version}.cargo-vendor.tar.xz
 Source2:    config.toml
 
@@ -341,12 +341,16 @@ exit 0
 
 
 %postun daemons
-%systemd_postun_with_restart solana-validator-%{solana_suffix}.service
+%systemd_postun solana-validator-%{solana_suffix}.service
 %systemd_postun_with_restart solana-sys-tuner-%{solana_suffix}.service
 %systemd_postun_with_restart solana-watchtower-%{solana_suffix}.service
 
 
 %changelog
+* Thu Feb 25 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.10-1
+- Update to 1.5.10
+- Do not restart solana-validator on upgrade
+
 * Wed Feb 24 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-3
 - Unbundle zstd
 - Enable optimizations for newer CPUs

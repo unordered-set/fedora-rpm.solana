@@ -1,50 +1,21 @@
-From a763f30c98b9014e65b68367f34612079f5349bc Mon Sep 17 00:00:00 2001
+From 5513a1ea64844da7831b81043e41e3bfa0ca1fda Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 17:17:32 +0500
 Subject: [PATCH 1/2] Replace bundled C/C++ libraries with system provided
 
 ---
- Cargo.lock                  | 21 +++++++++++++++------
+ Cargo.lock                  | 13 +++++++------
  account-decoder/Cargo.toml  |  2 +-
  remote-wallet/Cargo.toml    |  2 +-
  runtime/Cargo.toml          |  2 +-
  storage-bigtable/Cargo.toml |  2 +-
- 5 files changed, 19 insertions(+), 10 deletions(-)
+ 5 files changed, 11 insertions(+), 10 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 70c1a740cff3..d46c7a069173 100644
+index d226b3f535fa..27dae66d7da9 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -3038,6 +3038,12 @@ dependencies = [
-  "getrandom 0.1.14",
- ]
- 
-+[[package]]
-+name = "rand_core"
-+version = "0.6.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "34cf66eb183df1c5876e2dcf6b13d57340741e8dc255b48e40a26de954d06ae7"
-+
- [[package]]
- name = "rand_hc"
- version = "0.1.0"
-@@ -3894,6 +3900,7 @@ dependencies = [
-  "num-derive",
-  "num-traits",
-  "rand 0.7.3",
-+ "rand_core 0.6.2",
-  "rustversion",
-  "solana-runtime",
-  "solana-sdk",
-@@ -4067,6 +4074,7 @@ dependencies = [
-  "bincode",
-  "chrono",
-  "log 0.4.11",
-+ "rand_core 0.6.2",
-  "serde",
-  "serde_derive",
-  "solana-logger 1.5.8",
-@@ -6843,18 +6851,18 @@ dependencies = [
+@@ -6901,18 +6901,18 @@ dependencies = [
  
  [[package]]
  name = "zstd"
@@ -67,7 +38,7 @@ index 70c1a740cff3..d46c7a069173 100644
  dependencies = [
   "libc",
   "zstd-sys",
-@@ -6862,12 +6870,13 @@ dependencies = [
+@@ -6920,12 +6920,13 @@ dependencies = [
  
  [[package]]
  name = "zstd-sys"
@@ -84,12 +55,12 @@ index 70c1a740cff3..d46c7a069173 100644
 + "pkg-config",
  ]
 diff --git a/account-decoder/Cargo.toml b/account-decoder/Cargo.toml
-index 3ad4619d17be..7f67b98b464d 100644
+index 58b84dee5aed..8e66c66db929 100644
 --- a/account-decoder/Cargo.toml
 +++ b/account-decoder/Cargo.toml
-@@ -24,7 +24,7 @@ solana-stake-program = { path = "../programs/stake", version = "1.5.8" }
- solana-vote-program = { path = "../programs/vote", version = "1.5.8" }
- spl-token-v2-0 = { package = "spl-token", version = "=3.0.1", features = ["no-entrypoint"] }
+@@ -24,7 +24,7 @@ solana-stake-program = { path = "../programs/stake", version = "1.5.10" }
+ solana-vote-program = { path = "../programs/vote", version = "1.5.10" }
+ spl-token-v2-0 = { package = "spl-token", version = "=3.1.0", features = ["no-entrypoint"] }
  thiserror = "1.0"
 -zstd = "0.5.1"
 +zstd = { version = "0.5.4", features = ["pkg-config"] }
@@ -97,7 +68,7 @@ index 3ad4619d17be..7f67b98b464d 100644
  [package.metadata.docs.rs]
  targets = ["x86_64-unknown-linux-gnu"]
 diff --git a/remote-wallet/Cargo.toml b/remote-wallet/Cargo.toml
-index dab86bc9a233..78d40635adba 100644
+index f56337f3b534..58fe263e047c 100644
 --- a/remote-wallet/Cargo.toml
 +++ b/remote-wallet/Cargo.toml
 @@ -23,7 +23,7 @@ thiserror = "1.0"
@@ -110,7 +81,7 @@ index dab86bc9a233..78d40635adba 100644
  linux-static-hidraw = ["hidapi/linux-static-hidraw"]
  linux-shared-libusb = ["hidapi/linux-shared-libusb"]
 diff --git a/runtime/Cargo.toml b/runtime/Cargo.toml
-index 69353a71b48e..84f0aac81b44 100644
+index 5d60771c25ad..d53246c87ed6 100644
 --- a/runtime/Cargo.toml
 +++ b/runtime/Cargo.toml
 @@ -50,7 +50,7 @@ symlink = "0.1.0"
@@ -123,10 +94,10 @@ index 69353a71b48e..84f0aac81b44 100644
  [lib]
  crate-type = ["lib"]
 diff --git a/storage-bigtable/Cargo.toml b/storage-bigtable/Cargo.toml
-index 61a31e31f48a..8cc73959ae59 100644
+index 36a53672b1c3..3da6f00515ed 100644
 --- a/storage-bigtable/Cargo.toml
 +++ b/storage-bigtable/Cargo.toml
-@@ -28,7 +28,7 @@ solana-transaction-status = { path = "../transaction-status", version = "1.5.8"
+@@ -28,7 +28,7 @@ solana-transaction-status = { path = "../transaction-status", version = "1.5.10"
  thiserror = "1.0"
  futures = "0.3.8"
  tonic = {version="0.3.0", features = ["tls", "transport"]}
