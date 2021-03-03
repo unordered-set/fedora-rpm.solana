@@ -1,4 +1,4 @@
-From 69b89572935292dd1c9bd6577dba633f12631983 Mon Sep 17 00:00:00 2001
+From 138cd7b5d3497bcdeb5bc61cc363562eab939863 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 17:17:32 +0500
 Subject: [PATCH 1/2] Replace bundled C/C++ libraries with system provided
@@ -12,10 +12,10 @@ Subject: [PATCH 1/2] Replace bundled C/C++ libraries with system provided
  5 files changed, 11 insertions(+), 10 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index cfe3db0bc30d..ac8712c88d5a 100644
+index b36cda95b05c..0d10c412fbc3 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -6902,18 +6902,18 @@ dependencies = [
+@@ -6910,18 +6910,18 @@ dependencies = [
  
  [[package]]
  name = "zstd"
@@ -38,7 +38,7 @@ index cfe3db0bc30d..ac8712c88d5a 100644
  dependencies = [
   "libc",
   "zstd-sys",
-@@ -6921,12 +6921,13 @@ dependencies = [
+@@ -6929,12 +6929,13 @@ dependencies = [
  
  [[package]]
  name = "zstd-sys"
@@ -55,11 +55,11 @@ index cfe3db0bc30d..ac8712c88d5a 100644
 + "pkg-config",
  ]
 diff --git a/account-decoder/Cargo.toml b/account-decoder/Cargo.toml
-index b9eb95a6e7ae..49dded53187d 100644
+index 39707d876861..4c12fd33d07f 100644
 --- a/account-decoder/Cargo.toml
 +++ b/account-decoder/Cargo.toml
-@@ -24,7 +24,7 @@ solana-stake-program = { path = "../programs/stake", version = "1.5.11" }
- solana-vote-program = { path = "../programs/vote", version = "1.5.11" }
+@@ -24,7 +24,7 @@ solana-stake-program = { path = "../programs/stake", version = "1.5.12" }
+ solana-vote-program = { path = "../programs/vote", version = "1.5.12" }
  spl-token-v2-0 = { package = "spl-token", version = "=3.1.0", features = ["no-entrypoint"] }
  thiserror = "1.0"
 -zstd = "0.5.1"
@@ -68,7 +68,7 @@ index b9eb95a6e7ae..49dded53187d 100644
  [package.metadata.docs.rs]
  targets = ["x86_64-unknown-linux-gnu"]
 diff --git a/remote-wallet/Cargo.toml b/remote-wallet/Cargo.toml
-index 1a11ab998cca..435dfadf9894 100644
+index 7dce11493b3b..f732a2741606 100644
 --- a/remote-wallet/Cargo.toml
 +++ b/remote-wallet/Cargo.toml
 @@ -23,7 +23,7 @@ thiserror = "1.0"
@@ -81,7 +81,7 @@ index 1a11ab998cca..435dfadf9894 100644
  linux-static-hidraw = ["hidapi/linux-static-hidraw"]
  linux-shared-libusb = ["hidapi/linux-shared-libusb"]
 diff --git a/runtime/Cargo.toml b/runtime/Cargo.toml
-index 71a6babe16c9..f94db44761ce 100644
+index 9f5a7267ba30..46f37f50cd5d 100644
 --- a/runtime/Cargo.toml
 +++ b/runtime/Cargo.toml
 @@ -50,7 +50,7 @@ symlink = "0.1.0"
@@ -94,10 +94,10 @@ index 71a6babe16c9..f94db44761ce 100644
  [lib]
  crate-type = ["lib"]
 diff --git a/storage-bigtable/Cargo.toml b/storage-bigtable/Cargo.toml
-index ba1f66612bea..d9c494aa0bdc 100644
+index 1ae814d34e20..0228033d80e3 100644
 --- a/storage-bigtable/Cargo.toml
 +++ b/storage-bigtable/Cargo.toml
-@@ -28,7 +28,7 @@ solana-transaction-status = { path = "../transaction-status", version = "1.5.11"
+@@ -28,7 +28,7 @@ solana-transaction-status = { path = "../transaction-status", version = "1.5.12"
  thiserror = "1.0"
  futures = "0.3.8"
  tonic = {version="0.3.0", features = ["tls", "transport"]}
