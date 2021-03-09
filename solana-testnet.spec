@@ -7,7 +7,7 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-Version:    1.5.13
+Version:    1.5.14
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -347,6 +347,9 @@ exit 0
 
 
 %changelog
+* Tue Mar 09 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.14-1
+- Update to 1.5.14
+
 * Thu Mar 04 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.13-1
 - Update to 1.5.13
 
