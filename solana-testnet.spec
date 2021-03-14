@@ -2,13 +2,14 @@
 
 %global solana_user   solana-%{solana_suffix}
 %global solana_group  solana-%{solana_suffix}
-%global solana_home   %{_localstatedir}/lib/solana/%{solana_suffix}/
+%global solana_home   %{_sharedstatedir}/solana/%{solana_suffix}/
+%global solana_log    %{_localstatedir}/log/solana/%{solana_suffix}/
 %global solana_etc    %{_sysconfdir}/solana/%{solana_suffix}/
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
 Version:    1.5.14
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -25,6 +26,7 @@ Source5:    solana-validator
 Source6:    solana-sys-tuner.service
 Source7:    solana-watchtower.service
 Source8:    solana-watchtower
+Source9:    solana-validator.logrotate
 
 Source100:  filter-cargo-checksum
 
@@ -101,6 +103,7 @@ Requires: %{name}-cli = %{epoch}:%{version}-%{release}
 Requires: %{name}-utils = %{epoch}:%{version}-%{release}
 Requires: %{name}-deps = %{epoch}:%{version}-%{release}
 Requires: solana-perf-libs-%{solana_suffix}
+Requires: logrotate
 Requires(pre): shadow-utils
 Requires(post): systemd
 Requires(preun): systemd
@@ -191,14 +194,19 @@ sed 's,__SUFFIX__,%{solana_suffix},g' \
 sed 's,__SUFFIX__,%{solana_suffix},g' \
         <%{SOURCE8} \
         >solana-watchtower
+sed 's,__SUFFIX__,%{solana_suffix},g' \
+        <%{SOURCE9} \
+        >solana-validator.logrotate
 
 
 %install
 mkdir -p %{buildroot}/opt/solana/%{solana_suffix}/bin/deps
 mkdir -p %{buildroot}/%{_unitdir}
 mkdir -p %{buildroot}%{solana_home}
+mkdir -p %{buildroot}%{solana_log}
 mkdir -p %{buildroot}%{solana_etc}
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
+mkdir -p %{buildroot}%{_sysconfdir}/logrotate.d
 
 mv activate \
         %{buildroot}/opt/solana/%{solana_suffix}/
@@ -212,6 +220,8 @@ mv solana-watchtower.service \
         %{buildroot}/%{_unitdir}/solana-watchtower-%{solana_suffix}.service
 mv solana-watchtower \
         %{buildroot}%{_sysconfdir}/sysconfig/solana-watchtower-%{solana_suffix}
+mv solana-validator.logrotate \
+        %{buildroot}%{_sysconfdir}/logrotate.d/solana-validator-%{solana_suffix}
 
 find target/release -mindepth 1 -maxdepth 1 -type d -exec rm -r "{}" \;
 rm target/release/*.d
@@ -287,12 +297,16 @@ mv target/release/* \
 %{_unitdir}/solana-watchtower-%{solana_suffix}.service
 %attr(0640,root,%{solana_group}) %config(noreplace) %{_sysconfdir}/sysconfig/solana-validator-%{solana_suffix}
 %attr(0640,root,%{solana_group}) %config(noreplace) %{_sysconfdir}/sysconfig/solana-watchtower-%{solana_suffix}
+%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/logrotate.d/solana-validator-%{solana_suffix}
 
 %attr(0755,root,root) %dir %{_sysconfdir}/solana
 %attr(0750,root,%{solana_group}) %dir %{solana_etc}
 
-%attr(0755,root,root) %dir %{_localstatedir}/lib/solana
+%attr(0755,root,root) %dir %{_sharedstatedir}/solana
 %attr(0750,%{solana_user},%{solana_group}) %dir %{solana_home}
+
+%attr(0755,root,root) %dir %{_localstatedir}/log/solana
+%attr(0750,%{solana_user},%{solana_group}) %dir %{solana_log}
 
 
 %files bpf-utils
@@ -347,6 +361,9 @@ exit 0
 
 
 %changelog
+* Sun Mar 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.14-2
+- Support logging into files
+
 * Tue Mar 09 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.14-1
 - Update to 1.5.14
 
