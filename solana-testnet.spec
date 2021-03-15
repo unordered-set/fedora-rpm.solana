@@ -8,8 +8,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-Version:    1.5.14
-Release:    2%{?dist}
+Version:    1.6.0
+Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -322,6 +322,7 @@ mv target/release/* \
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana-accounts-bench
+/opt/solana/%{solana_suffix}/bin/solana-accounts-cluster-bench
 /opt/solana/%{solana_suffix}/bin/solana-banking-bench
 /opt/solana/%{solana_suffix}/bin/solana-bench-exchange
 /opt/solana/%{solana_suffix}/bin/solana-bench-streamer
@@ -361,6 +362,9 @@ exit 0
 
 
 %changelog
+* Mon Mar 15 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.0-1
+- Update to 1.6.0
+
 * Sun Mar 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.14-2
 - Support logging into files
 
