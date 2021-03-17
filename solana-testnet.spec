@@ -104,6 +104,7 @@ Requires: %{name}-utils = %{epoch}:%{version}-%{release}
 Requires: %{name}-deps = %{epoch}:%{version}-%{release}
 Requires: solana-perf-libs-%{solana_suffix}
 Requires: logrotate
+Requires: zstd
 Requires(pre): shadow-utils
 Requires(post): systemd
 Requires(preun): systemd
