@@ -3,12 +3,16 @@ PATH="/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sb
 # Logging configuration.
 RUST_LOG="info"
 
-# Metrics configuration for Testnet.
-SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=tds,u=testnet_write,p=c4fa841aa918bf8274e3e2a44d77568d9861b3ea"
+# Metrics configuration for Mainnet.
+SOLANA_METRICS_CONFIG=""
 
-# Command line options for solana-validator on Testnet.
+# Command line options for solana-validator on Mainnet.
 SERVICE_OPTS="
     --ledger /var/lib/solana/__SUFFIX__/ledger
-    --entrypoint entrypoint.testnet.solana.com:8001
+    --entrypoint entrypoint.mainnet-beta.solana.com:8001
+    --entrypoint entrypoint2.mainnet-beta.solana.com:8001
+    --entrypoint entrypoint3.mainnet-beta.solana.com:8001
+    --entrypoint entrypoint4.mainnet-beta.solana.com:8001
+    --entrypoint entrypoint5.mainnet-beta.solana.com:8001
     --log /var/log/solana/__SUFFIX__/validator.log
 "

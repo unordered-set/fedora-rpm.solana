@@ -1,4 +1,4 @@
-%global solana_suffix testnet
+%global solana_suffix mainnet
 
 %global solana_user   solana-%{solana_suffix}
 %global solana_group  solana-%{solana_suffix}
@@ -8,7 +8,7 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-Version:    1.6.1
+Version:    1.5.16
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -323,7 +323,6 @@ mv target/release/* \
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana-accounts-bench
-/opt/solana/%{solana_suffix}/bin/solana-accounts-cluster-bench
 /opt/solana/%{solana_suffix}/bin/solana-banking-bench
 /opt/solana/%{solana_suffix}/bin/solana-bench-exchange
 /opt/solana/%{solana_suffix}/bin/solana-bench-streamer
@@ -363,42 +362,5 @@ exit 0
 
 
 %changelog
-* Thu Mar 18 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.1-1
-- Update to 1.6.1
-
-* Mon Mar 15 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.0-1
-- Update to 1.6.0
-
-* Sun Mar 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.14-2
-- Support logging into files
-
-* Tue Mar 09 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.14-1
-- Update to 1.5.14
-
-* Thu Mar 04 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.13-1
-- Update to 1.5.13
-
-* Wed Mar 03 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.12-1
-- Update to 1.5.12
-
-* Sat Feb 27 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.11-1
-- Update to 1.5.11
-
-* Thu Feb 25 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.10-1
-- Update to 1.5.10
-- Do not restart solana-validator on upgrade
-
-* Wed Feb 24 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-3
-- Unbundle zstd
-- Enable optimizations for newer CPUs
-
-* Thu Feb 18 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-2
-- Replace bundled C/C++ libraries with system provided
-- Enable LTO and debug info in release profile
-- Add directories
-
-* Wed Feb 17 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.8-1
-- Update to 1.5.8
-
-* Sat Feb 13 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.7-1
-- Initial packaging
+* Sat Mar 20 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.16-1
+- Initial packaging for Mainnet
