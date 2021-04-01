@@ -3,6 +3,9 @@ PATH="/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sb
 # Logging configuration.
 RUST_LOG="info"
 
+# Print full backtrace on panic.
+RUST_BACKTRACE="full"
+
 # Metrics configuration for Testnet.
 SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=tds,u=testnet_write,p=c4fa841aa918bf8274e3e2a44d77568d9861b3ea"
 
