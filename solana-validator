@@ -3,6 +3,9 @@ PATH="/opt/solana/__SUFFIX__/bin:/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sb
 # Logging configuration.
 RUST_LOG="info"
 
+# Print full backtrace on panic.
+RUST_BACKTRACE="full"
+
 # Metrics configuration for Mainnet.
 SOLANA_METRICS_CONFIG=""
 
