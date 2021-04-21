@@ -8,8 +8,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 7e480df9fabd930f3827d5fbeb5fe281199c15cc
-Version:    1.5.18
+# git 936ff7424e1306b0df07dabcd6863bf7896d2cb5
+Version:    1.5.19
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -17,7 +17,8 @@ License:    Apache-2.0
 URL:        https://github.com/solana-labs/solana/
 Source0:    https://github.com/solana-labs/solana/archive/v%{version}/solana-%{version}.tar.gz
 
-# cargo vendor
+# $ cargo vendor
+# Contains solana-$VERSION/vendor/*.
 Source1:    solana-%{version}.cargo-vendor.tar.xz
 Source2:    config.toml
 
@@ -363,6 +364,9 @@ exit 0
 
 
 %changelog
+* Wed Apr 21 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.19-1
+- Update to 1.5.19
+
 * Fri Apr 02 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.18-1
 - Update to 1.5.18
 
