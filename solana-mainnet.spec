@@ -8,8 +8,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 936ff7424e1306b0df07dabcd6863bf7896d2cb5
-Version:    1.5.19
+# git ebb5fc1285a029c1a8507f5b402ba73225eda1c3
+Version:    1.6.7
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -325,6 +325,7 @@ mv target/release/* \
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/solana-accounts-bench
+/opt/solana/%{solana_suffix}/bin/solana-accounts-cluster-bench
 /opt/solana/%{solana_suffix}/bin/solana-banking-bench
 /opt/solana/%{solana_suffix}/bin/solana-bench-exchange
 /opt/solana/%{solana_suffix}/bin/solana-bench-streamer
@@ -364,6 +365,9 @@ exit 0
 
 
 %changelog
+* Sun May 09 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.7-1
+- Update to 1.6.7
+
 * Wed Apr 21 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.5.19-1
 - Update to 1.5.19
 
