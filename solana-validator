@@ -7,16 +7,26 @@ RUST_LOG="info"
 RUST_BACKTRACE="full"
 
 # Metrics configuration for Mainnet.
+# SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=mainnet-beta,u=mainnet-beta_write,p=password"
 SOLANA_METRICS_CONFIG=""
 
 # Command line options for solana-validator on Mainnet.
 SERVICE_OPTS="
     --identity /etc/solana/__SUFFIX__/validator-keypair.json
     --ledger /var/lib/solana/__SUFFIX__/ledger
+    --trusted-validator 7Np41oeYqPefeNQEHSv1UDhYrehxin3NStELsSKCT4K2
+    --trusted-validator GdnSyH3YtwcxFvQrVVJMm1JhTS4QVX7MFsX56uJLUfiZ
+    --trusted-validator DE1bawNcRJB9rVm3buyMVfr8mBEoyyu73NBovf2oXJsJ
+    --trusted-validator CakcnaRDHka2gXyfbEd2d3xsvkJkqsLw2akB3zsN1D2S
+    --no-untrusted-rpc
+    --private-rpc
     --entrypoint entrypoint.mainnet-beta.solana.com:8001
     --entrypoint entrypoint2.mainnet-beta.solana.com:8001
     --entrypoint entrypoint3.mainnet-beta.solana.com:8001
     --entrypoint entrypoint4.mainnet-beta.solana.com:8001
     --entrypoint entrypoint5.mainnet-beta.solana.com:8001
+    --expected-genesis-hash 5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d
+    --wal-recovery-mode skip_any_corrupted_record
+    --limit-ledger-size
     --log /var/log/solana/__SUFFIX__/validator.log
 "

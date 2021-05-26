@@ -13,4 +13,5 @@ RUST_LOG="info"
 # Command line options for solana-watchtower.
 SERVICE_OPTS="
     --config /etc/solana/__SUFFIX__/cli-config.yml
+    --url https://api.mainnet-beta.solana.com
 "
