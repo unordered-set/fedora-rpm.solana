@@ -10,7 +10,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      0
 # git 5d4654d2f439003eb4357f1ee92177447331b1d7
 Version:    1.6.10
-Release:    1%{?dist}
+Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -365,6 +365,10 @@ exit 0
 
 
 %changelog
+* Sat May 29 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.10-100
+- Change package version to prevent /usr/lib/.build-id collision with
+  build of the same Solana version for the Testnet.
+
 * Fri May 28 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.10-1
 - Update to 1.6.10
 
