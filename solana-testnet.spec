@@ -8,8 +8,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 5d4654d2f439003eb4357f1ee92177447331b1d7
-Version:    1.6.10
+# git 2798271da0f744a048b264c26075dafb3be96ab3
+Version:    1.7.0
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -51,7 +51,6 @@ BuildRequires:  zlib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  lz4-devel
 BuildRequires:  hidapi-devel
-BuildRequires:  jemalloc-devel
 BuildRequires:  rocksdb-devel
 BuildRequires:  libzstd-devel
 
@@ -146,9 +145,6 @@ rm -r vendor/bzip2-sys/bzip2-*
 %{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
 rm -r vendor/hidapi/etc/hidapi
 %{python} %{SOURCE100} vendor/hidapi '^etc/hidapi/.*'
-rm -r vendor/jemalloc-sys/jemalloc
-rm -r vendor/jemalloc-sys/rep
-%{python} %{SOURCE100} vendor/jemalloc-sys '^jemalloc/.*' '^rep/.*'
 rm -r vendor/librocksdb-sys/bzip2
 rm -r vendor/librocksdb-sys/lz4
 rm -r vendor/librocksdb-sys/rocksdb
@@ -168,7 +164,6 @@ cp %{SOURCE2} .cargo/
 
 
 %build
-export JEMALLOC_OVERRIDE=%{_libdir}/libjemalloc.so
 export ROCKSDB_INCLUDE_DIR=%{_includedir}
 export ROCKSDB_LIB_DIR=%{_libdir}
 export LZ4_INCLUDE_DIR=%{_includedir}
@@ -256,7 +251,6 @@ mv target/release/* \
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
 /opt/solana/%{solana_suffix}/bin/solana-stake-accounts
 /opt/solana/%{solana_suffix}/bin/solana-stake-monitor
-/opt/solana/%{solana_suffix}/bin/solana-stake-o-matic
 /opt/solana/%{solana_suffix}/bin/solana-tokens
 
 
@@ -334,7 +328,6 @@ mv target/release/* \
 /opt/solana/%{solana_suffix}/bin/solana-merkle-root-bench
 /opt/solana/%{solana_suffix}/bin/solana-poh-bench
 /opt/solana/%{solana_suffix}/bin/solana-test-validator
-/opt/solana/%{solana_suffix}/bin/solana-ramp-tps
 
 
 %pre daemons
@@ -365,6 +358,9 @@ exit 0
 
 
 %changelog
+* Wed Jun 2 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.0-1
+- Update to 1.7.0
+
 * Wed May 26 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.10-1
 - Update to 1.6.10
 
