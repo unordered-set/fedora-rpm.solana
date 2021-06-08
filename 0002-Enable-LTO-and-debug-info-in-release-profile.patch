@@ -1,4 +1,4 @@
-From a4cc2f801dad65127f8a1f7f5323c54dc639a3b2 Mon Sep 17 00:00:00 2001
+From aafb44c8846682bf79428a826b0e4d6ef98fcaf9 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 20:10:01 +0500
 Subject: [PATCH 2/2] Enable LTO and debug info in release profile
@@ -8,10 +8,10 @@ Subject: [PATCH 2/2] Enable LTO and debug info in release profile
  1 file changed, 6 insertions(+)
 
 diff --git a/Cargo.toml b/Cargo.toml
-index 28a13a393e83..b017f6871b47 100644
+index 6c66b5046ceb..554d40834c85 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -78,3 +78,9 @@ exclude = [
+@@ -79,3 +79,9 @@ exclude = [
  
  [profile.dev]
  split-debuginfo = "unpacked"

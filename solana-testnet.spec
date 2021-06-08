@@ -8,8 +8,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 2798271da0f744a048b264c26075dafb3be96ab3
-Version:    1.7.0
+# git cd6e1d921c5edfe6f73a79eda2af699f62660aa0
+Version:    1.7.1
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -273,7 +273,6 @@ mv target/release/* \
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 %dir /opt/solana/%{solana_suffix}/bin/deps
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_budget_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_failure_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_noop_program.so
@@ -358,6 +357,9 @@ exit 0
 
 
 %changelog
+* Tue Jun 8 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.1-1
+- Update to 1.7.1
+
 * Wed Jun 2 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.0-1
 - Update to 1.7.0
 
