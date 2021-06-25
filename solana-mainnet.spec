@@ -6,11 +6,19 @@
 %global solana_log    %{_localstatedir}/log/solana/%{solana_suffix}/
 %global solana_etc    %{_sysconfdir}/solana/%{solana_suffix}/
 
+# Available CPUs and features: `llc -march=x86-64 -mattr=help`.
+# x86-64-v3 (close to Haswell):
+#   AVX, AVX2, BMI1, BMI2, F16C, FMA, LZCNT, MOVBE, XSAVE
+%global validator_target_cpu x86-64-v3
+# x86-64:
+#   CMOV, CMPXCHG8B, FPU, FXSR, MMX, FXSR, SCE, SSE, SSE2
+%global base_target_cpu x86-64
+
 Name:       solana-%{solana_suffix}
 Epoch:      0
 # git 7759210ff3f85f8f331b123bce045478f16c1ae1
 Version:    1.6.14
-Release:    100%{?dist}
+Release:    101%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -174,9 +182,14 @@ export ROCKSDB_LIB_DIR=%{_libdir}
 export LZ4_INCLUDE_DIR=%{_includedir}
 export LZ4_LIB_DIR=%{_libdir}
 
-# Optimize for oldest CPU still in use (by me).
-# Available CPUs and features: `llc -march=x86-64 -mattr=help`.
-export RUSTFLAGS='-C target-cpu=ivybridge'
+# First, build binaries optimized for newer CPUs.
+export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
+%{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
+mv target/release ./release.newer-cpus
+%{__cargo} clean
+
+# Second, build binaries optimized for generic baseline CPU.
+export RUSTFLAGS='-C target-cpu=%{base_target_cpu}'
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
 
 sed 's,__SUFFIX__,%{solana_suffix},g' \
@@ -225,6 +238,16 @@ mv solana-watchtower \
         %{buildroot}%{_sysconfdir}/sysconfig/solana-watchtower-%{solana_suffix}
 mv solana-validator.logrotate \
         %{buildroot}%{_sysconfdir}/logrotate.d/solana-validator-%{solana_suffix}
+
+# Use binaries optimized for newer CPUs for running validator and local benchmarks.
+mv release.newer-cpus/*.so target/release/
+mv release.newer-cpus/solana-validator target/release/
+mv release.newer-cpus/solana-accounts-bench target/release/
+mv release.newer-cpus/solana-banking-bench target/release/
+mv release.newer-cpus/solana-bench-streamer target/release/
+mv release.newer-cpus/solana-merkle-root-bench target/release/
+mv release.newer-cpus/solana-poh-bench target/release/
+mv release.newer-cpus/solana-test-validator target/release/
 
 find target/release -mindepth 1 -maxdepth 1 -type d -exec rm -r "{}" \;
 rm target/release/*.d
@@ -365,6 +388,9 @@ exit 0
 
 
 %changelog
+* Fri Jun 25 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.14-101
+- Optimize performance-critical binaries for newer CPUs.
+
 * Tue Jun 22 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.14-100
 - Update to 1.6.14
 
