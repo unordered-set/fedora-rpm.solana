@@ -16,9 +16,9 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 7759210ff3f85f8f331b123bce045478f16c1ae1
-Version:    1.6.14
-Release:    101%{?dist}
+# git 5c2dab8055e8162386fcac313b6547f223fd386c
+Version:    1.6.15
+Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -388,6 +388,9 @@ exit 0
 
 
 %changelog
+* Fri Jul 2 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.15-100
+- Update to 1.6.15
+
 * Fri Jun 25 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.14-101
 - Optimize performance-critical binaries for newer CPUs.
 
