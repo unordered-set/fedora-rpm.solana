@@ -7,8 +7,7 @@ RUST_LOG="info"
 RUST_BACKTRACE="full"
 
 # Metrics configuration for Mainnet.
-# SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=mainnet-beta,u=mainnet-beta_write,p=password"
-SOLANA_METRICS_CONFIG=""
+SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=mainnet-beta,u=mainnet-beta_write,p=password"
 
 # Command line options for solana-validator on Mainnet.
 SERVICE_OPTS="
@@ -20,6 +19,8 @@ SERVICE_OPTS="
     --trusted-validator CakcnaRDHka2gXyfbEd2d3xsvkJkqsLw2akB3zsN1D2S
     --no-untrusted-rpc
     --private-rpc
+    --rpc-bind-address 127.0.0.1
+    --rpc-port 8899
     --entrypoint entrypoint.mainnet-beta.solana.com:8001
     --entrypoint entrypoint2.mainnet-beta.solana.com:8001
     --entrypoint entrypoint3.mainnet-beta.solana.com:8001
