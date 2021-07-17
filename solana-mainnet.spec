@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 86c26f843276581509c3434acc2efbf4202c44e0
-Version:    1.6.16
+# git 870a7e8458debca98e70a89aa8887a48e166d7a8
+Version:    1.6.18
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -49,6 +49,7 @@ ExclusiveArch:  %{rust_arches}
 BuildRequires:  %{python}
 
 BuildRequires:  rust-packaging
+BuildRequires:  rustfmt
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  gcc
 BuildRequires:  clang
@@ -278,7 +279,6 @@ mv target/release/* \
 /opt/solana/%{solana_suffix}/bin/solana-gossip
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
 /opt/solana/%{solana_suffix}/bin/solana-stake-accounts
-/opt/solana/%{solana_suffix}/bin/solana-stake-monitor
 /opt/solana/%{solana_suffix}/bin/solana-stake-o-matic
 /opt/solana/%{solana_suffix}/bin/solana-tokens
 
@@ -388,6 +388,9 @@ exit 0
 
 
 %changelog
+* Sat Jul 17 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.18-100
+- Update to 1.6.18
+
 * Sat Jul 3 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.6.16-100
 - Update to 1.6.16
 
