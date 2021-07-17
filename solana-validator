@@ -19,6 +19,8 @@ SERVICE_OPTS="
     --trusted-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv
     --no-untrusted-rpc
     --private-rpc
+    --rpc-bind-address 127.0.0.1
+    --rpc-port 8899
     --entrypoint entrypoint.testnet.solana.com:8001
     --entrypoint entrypoint2.testnet.solana.com:8001
     --entrypoint entrypoint3.testnet.solana.com:8001
