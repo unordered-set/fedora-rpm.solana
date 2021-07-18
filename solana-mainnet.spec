@@ -193,7 +193,17 @@ export LZ4_LIB_DIR=%{_libdir}
 # First, build binaries optimized for newer CPUs.
 cp Cargo.toml.lto Cargo.toml
 export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
-%{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
+%{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release \
+        --package solana-validator \
+        --package solana-accounts-bench \
+        --package solana-banking-bench \
+        --package solana-bench-streamer \
+        --package solana-merkle-root-bench \
+        --package solana-poh-bench \
+        --package solana-exchange-program \
+        --package solana-failure-program \
+        --package solana-noop-program
+
 mv target/release ./release.newer-cpus
 %{__cargo} clean
 
