@@ -42,6 +42,7 @@ Source100:  filter-cargo-checksum
 
 Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
+Patch2: 0003-Disable-LTO.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -146,8 +147,14 @@ Solana tests and benchmarks (%{solana_suffix} version).
 
 
 %prep
-%autosetup -p1 -b0 -n solana-%{version}
-%autosetup -p1 -b1 -n solana-%{version}
+%autosetup -N -b0 -n solana-%{version}
+%autosetup -N -b1 -n solana-%{version}
+
+%patch0 -p1
+%patch1 -p1
+cp Cargo.toml Cargo.toml.lto
+%patch2 -p1
+cp Cargo.toml Cargo.toml.no-lto
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -179,12 +186,14 @@ export LZ4_INCLUDE_DIR=%{_includedir}
 export LZ4_LIB_DIR=%{_libdir}
 
 # First, build binaries optimized for newer CPUs.
+cp Cargo.toml.lto Cargo.toml
 export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
 mv target/release ./release.newer-cpus
 %{__cargo} clean
 
 # Second, build binaries optimized for generic baseline CPU.
+cp Cargo.toml.no-lto Cargo.toml
 export RUSTFLAGS='-C target-cpu=%{base_target_cpu}'
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release
 

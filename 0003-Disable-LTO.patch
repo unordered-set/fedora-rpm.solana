@@ -1,0 +1,22 @@
+From 85cbd47662a4c1328f5d99374d515c4f05acdd7f Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Sun, 18 Jul 2021 11:29:24 +0500
+Subject: [PATCH 3/3] Disable LTO
+
+---
+ Cargo.toml | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/Cargo.toml b/Cargo.toml
+index 547504190ed8..727320825446 100644
+--- a/Cargo.toml
++++ b/Cargo.toml
+@@ -82,5 +82,3 @@ split-debuginfo = "unpacked"
+ [profile.release]
+ opt-level = 3
+ debug = true
+-lto = "fat"
+-codegen-units = 1
+-- 
+2.31.1
+
