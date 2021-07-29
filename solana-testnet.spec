@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      0
 # git 7aced9e7726976bfece3192bdedc35311d5f2285
 Version:    1.7.8
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -43,6 +43,10 @@ Source100:  filter-cargo-checksum
 Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
 Patch2: 0003-Disable-LTO.patch
+
+Patch3: 0001-Fix-libc-error-detection-182.patch
+Patch4: 0002-Use-mmap-instead-of-memalign-184.patch
+Patch5: fix-rbpf-crate-checksums.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -155,6 +159,10 @@ Solana tests and benchmarks (%{solana_suffix} version).
 cp Cargo.toml Cargo.toml.lto
 %patch2 -p1
 cp Cargo.toml Cargo.toml.no-lto
+
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -399,6 +407,9 @@ exit 0
 
 
 %changelog
+* Sat Jul 24 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.8-2
+- Backport patches for https://github.com/solana-labs/solana/issues/18177
+
 * Sat Jul 24 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.8-1
 - Update to 1.7.8
 
