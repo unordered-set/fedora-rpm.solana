@@ -16,17 +16,20 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 7aced9e7726976bfece3192bdedc35311d5f2285
-Version:    1.7.8
-Release:    2%{?dist}
+# git 0707290bbf5ec65a40288830312006ce16749d96
+Version:    1.7.9
+Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
 URL:        https://github.com/solana-labs/solana/
 Source0:    https://github.com/solana-labs/solana/archive/v%{version}/solana-%{version}.tar.gz
 
-# $ cargo vendor
 # Contains solana-$VERSION/vendor/*.
+#     $ cargo vendor
+#     $ mkdir solana-X.Y.Z
+#     $ mv vendor solana-X.Y.Z/
+#     $ tar vcJf solana-X.Y.Z.cargo-vendor.tar.xz solana-X.Y.Z
 Source1:    solana-%{version}.cargo-vendor.tar.xz
 Source2:    config.toml
 
@@ -237,6 +240,8 @@ sed 's,__SUFFIX__,%{solana_suffix},g' \
         <%{SOURCE9} \
         >solana-validator.logrotate
 
+./target/release/solana completion --shell bash >solana.bash-completion
+
 
 %install
 mkdir -p %{buildroot}/opt/solana/%{solana_suffix}/bin/deps
@@ -286,6 +291,9 @@ mv target/release/*.so \
 mv target/release/* \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/
 
+mkdir -p %{buildroot}/%{_datadir}/bash-completion/completions
+mv solana.bash-completion %{buildroot}/%{_datadir}/bash-completion/completions/%{name}
+
 
 %files common
 %dir /opt/solana
@@ -302,6 +310,9 @@ mv target/release/* \
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
 /opt/solana/%{solana_suffix}/bin/solana-stake-accounts
 /opt/solana/%{solana_suffix}/bin/solana-tokens
+%dir %{_datadir}/bash-completion
+%dir %{_datadir}/bash-completion/completions
+%{_datadir}/bash-completion/completions/%{name}
 
 
 %files utils
@@ -407,6 +418,9 @@ exit 0
 
 
 %changelog
+* Sun Aug 1 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.9-1
+- Update to 1.7.9
+
 * Sat Jul 24 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.8-2
 - Backport patches for https://github.com/solana-labs/solana/issues/18177
 

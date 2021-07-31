@@ -1,4 +1,4 @@
-From 1582610d775a0e0ceee66be553bf2584328f0d27 Mon Sep 17 00:00:00 2001
+From 803f3318a06f3b2c398c4703547bc4d23188a686 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Sun, 18 Jul 2021 11:29:24 +0500
 Subject: [PATCH 3/3] Disable LTO
@@ -8,10 +8,10 @@ Subject: [PATCH 3/3] Disable LTO
  1 file changed, 2 deletions(-)
 
 diff --git a/Cargo.toml b/Cargo.toml
-index 547504190ed8..727320825446 100644
+index d0992a8cfafd..eb9eb7115cd2 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -82,5 +82,3 @@ split-debuginfo = "unpacked"
+@@ -87,5 +87,3 @@ split-debuginfo = "unpacked"
  [profile.release]
  opt-level = 3
  debug = true
