@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      0
 # git 03b930515bc554396bc69d811be834d22978a1d3
 Version:    1.7.10
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -415,6 +415,9 @@ exit 0
 
 
 %changelog
+* Thu Aug 12 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.10-2
+- Fix bash-completion in activation script
+
 * Thu Aug 12 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.10-1
 - Update to 1.7.10
 
