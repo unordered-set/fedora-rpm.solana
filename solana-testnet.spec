@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 0707290bbf5ec65a40288830312006ce16749d96
-Version:    1.7.9
+# git 03b930515bc554396bc69d811be834d22978a1d3
+Version:    1.7.10
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -291,8 +291,7 @@ mv target/release/*.so \
 mv target/release/* \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/
 
-mkdir -p %{buildroot}/%{_datadir}/bash-completion/completions
-mv solana.bash-completion %{buildroot}/%{_datadir}/bash-completion/completions/%{name}
+mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.bash-completion
 
 
 %files common
@@ -310,9 +309,7 @@ mv solana.bash-completion %{buildroot}/%{_datadir}/bash-completion/completions/%
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
 /opt/solana/%{solana_suffix}/bin/solana-stake-accounts
 /opt/solana/%{solana_suffix}/bin/solana-tokens
-%dir %{_datadir}/bash-completion
-%dir %{_datadir}/bash-completion/completions
-%{_datadir}/bash-completion/completions/%{name}
+/opt/solana/%{solana_suffix}/bin/solana.bash-completion
 
 
 %files utils
@@ -418,6 +415,9 @@ exit 0
 
 
 %changelog
+* Thu Aug 12 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.10-1
+- Update to 1.7.10
+
 * Sun Aug 1 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.9-1
 - Update to 1.7.9
 
