@@ -15,9 +15,9 @@
 %global base_target_cpu x86-64
 
 Name:       solana-%{solana_suffix}
-Epoch:      0
-# git 03b930515bc554396bc69d811be834d22978a1d3
-Version:    1.7.10
+Epoch:      1
+# git 40fc14471debe19f602b2b991dd2849e2b1a8497
+Version:    1.6.21
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -47,9 +47,7 @@ Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
 Patch2: 0003-Disable-LTO.patch
 
-Patch3: 0001-Fix-libc-error-detection-182.patch
-Patch4: 0002-Use-mmap-instead-of-memalign-184.patch
-Patch5: fix-rbpf-crate-checksums.patch
+Patch3: 0004-Fix-clippy-17214.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -68,6 +66,7 @@ BuildRequires:  zlib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  lz4-devel
 BuildRequires:  hidapi-devel
+BuildRequires:  jemalloc-devel
 BuildRequires:  rocksdb-devel
 BuildRequires:  libzstd-devel
 
@@ -164,14 +163,15 @@ cp Cargo.toml Cargo.toml.lto
 cp Cargo.toml Cargo.toml.no-lto
 
 %patch3 -p1
-%patch4 -p1
-%patch5 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
 %{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
 rm -r vendor/hidapi/etc/hidapi
 %{python} %{SOURCE100} vendor/hidapi '^etc/hidapi/.*'
+rm -r vendor/jemalloc-sys/jemalloc
+rm -r vendor/jemalloc-sys/rep
+%{python} %{SOURCE100} vendor/jemalloc-sys '^jemalloc/.*' '^rep/.*'
 rm -r vendor/librocksdb-sys/bzip2
 rm -r vendor/librocksdb-sys/lz4
 rm -r vendor/librocksdb-sys/rocksdb
@@ -191,6 +191,7 @@ cp %{SOURCE2} .cargo/
 
 
 %build
+export JEMALLOC_OVERRIDE=%{_libdir}/libjemalloc.so
 export ROCKSDB_INCLUDE_DIR=%{_includedir}
 export ROCKSDB_LIB_DIR=%{_libdir}
 export LZ4_INCLUDE_DIR=%{_includedir}
@@ -239,8 +240,6 @@ sed 's,__SUFFIX__,%{solana_suffix},g' \
 sed 's,__SUFFIX__,%{solana_suffix},g' \
         <%{SOURCE9} \
         >solana-validator.logrotate
-
-./target/release/solana completion --shell bash >solana.bash-completion
 
 
 %install
@@ -291,8 +290,6 @@ mv target/release/*.so \
 mv target/release/* \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/
 
-mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.bash-completion
-
 
 %files common
 %dir /opt/solana
@@ -308,8 +305,8 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 /opt/solana/%{solana_suffix}/bin/solana-gossip
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
 /opt/solana/%{solana_suffix}/bin/solana-stake-accounts
+/opt/solana/%{solana_suffix}/bin/solana-stake-o-matic
 /opt/solana/%{solana_suffix}/bin/solana-tokens
-/opt/solana/%{solana_suffix}/bin/solana.bash-completion
 
 
 %files utils
@@ -331,6 +328,7 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 %dir /opt/solana/%{solana_suffix}/bin/deps
+/opt/solana/%{solana_suffix}/bin/deps/libsolana_budget_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_failure_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_noop_program.so
@@ -385,6 +383,7 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 /opt/solana/%{solana_suffix}/bin/solana-merkle-root-bench
 /opt/solana/%{solana_suffix}/bin/solana-poh-bench
 /opt/solana/%{solana_suffix}/bin/solana-test-validator
+/opt/solana/%{solana_suffix}/bin/solana-ramp-tps
 
 
 %pre daemons
@@ -415,6 +414,9 @@ exit 0
 
 
 %changelog
+* Fri Aug 20 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.6.21-100
+- Downgrade to 1.6.21 as recommended by developers
+
 * Sat Aug 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.10-100
 - Update to 1.7.10
 
