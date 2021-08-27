@@ -13,11 +13,11 @@ SOLANA_METRICS_CONFIG="host=https://metrics.solana.com:8086,db=tds,u=testnet_wri
 SERVICE_OPTS="
     --identity /etc/solana/__SUFFIX__/validator-keypair.json
     --ledger /var/lib/solana/__SUFFIX__/ledger
-    --trusted-validator 5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on
-    --trusted-validator 7XSY3MrYnK8vq693Rju17bbPkCN3Z7KvvfvJx4kdrsSY
-    --trusted-validator Ft5fbkqNa76vnsjYNwjDZUXoTWpP7VYm3mtsaQckQADN
-    --trusted-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv
-    --no-untrusted-rpc
+    --known-validator 5D1fNXzvv5NjV1ysLjirC4WY92RNsVH18vjmcszZd8on
+    --known-validator 7XSY3MrYnK8vq693Rju17bbPkCN3Z7KvvfvJx4kdrsSY
+    --known-validator Ft5fbkqNa76vnsjYNwjDZUXoTWpP7VYm3mtsaQckQADN
+    --known-validator 9QxCLckBiJc783jnMvXZubK4wH86Eqqvashtrwvcsgkv
+    --only-known-rpc
     --private-rpc
     --rpc-bind-address 127.0.0.1
     --rpc-port 8899
