@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git 83d08223fd67184ab3f81666736229a5b4e2b867
-Version:    1.6.23
+# git a4ebbc9f552357ea74645c15efbbcf4f263cf8ea
+Version:    1.6.24
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -410,6 +410,9 @@ exit 0
 
 
 %changelog
+* Tue Sep 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.6.24-100
+- Update to 1.6.24
+
 * Tue Sep 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.6.23-100
 - Update to 1.6.23
 - Keep log files for 14 days instead of 7

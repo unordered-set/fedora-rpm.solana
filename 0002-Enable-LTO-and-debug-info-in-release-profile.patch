@@ -1,4 +1,4 @@
-From 6d23a7473a8eb366d505cc40527c9238e0f5d549 Mon Sep 17 00:00:00 2001
+From fbe91ef7cfcc3f20222f795f3c969a4d03ee10fa Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 20:10:01 +0500
 Subject: [PATCH 2/3] Enable LTO and debug info in release profile
