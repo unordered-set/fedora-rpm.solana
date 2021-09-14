@@ -1,7 +1,7 @@
-From 941eb2204f592e52e93ee6817f658b86d7c54a32 Mon Sep 17 00:00:00 2001
+From c6579ee5d58c3ecb8df82e5e807917ee76b58099 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Sun, 18 Jul 2021 11:29:24 +0500
-Subject: [PATCH 3/4] Disable LTO
+Subject: [PATCH 3/3] Disable LTO
 
 ---
  Cargo.toml | 2 --

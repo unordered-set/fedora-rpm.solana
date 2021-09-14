@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git 7956f04fa5d421b371530aad8bb042099eb46f03
-Version:    1.6.22
+# git 83d08223fd67184ab3f81666736229a5b4e2b867
+Version:    1.6.23
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -46,8 +46,6 @@ Source100:  filter-cargo-checksum
 Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
 Patch2: 0003-Disable-LTO.patch
-
-Patch3: 0004-Fix-clippy-17214.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -161,8 +159,6 @@ Solana tests and benchmarks (%{solana_suffix} version).
 cp Cargo.toml Cargo.toml.lto
 %patch2 -p1
 cp Cargo.toml Cargo.toml.no-lto
-
-%patch3 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -414,6 +410,10 @@ exit 0
 
 
 %changelog
+* Tue Sep 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.6.23-100
+- Update to 1.6.23
+- Keep log files for 14 days instead of 7
+
 * Fri Aug 27 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.6.22-100
 - Update to 1.6.22
 

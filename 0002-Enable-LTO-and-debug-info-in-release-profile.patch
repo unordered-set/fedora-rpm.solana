@@ -1,7 +1,7 @@
-From 7806dc8db82745d7ff4e87e150373ee4e9941c74 Mon Sep 17 00:00:00 2001
+From 6d23a7473a8eb366d505cc40527c9238e0f5d549 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 20:10:01 +0500
-Subject: [PATCH 2/4] Enable LTO and debug info in release profile
+Subject: [PATCH 2/3] Enable LTO and debug info in release profile
 
 ---
  Cargo.toml | 6 ++++++

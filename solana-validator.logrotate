@@ -1,5 +1,5 @@
 /var/log/solana/__SUFFIX__/validator.log {
-    rotate 7
+    rotate 14
     daily
     missingok
     compress
