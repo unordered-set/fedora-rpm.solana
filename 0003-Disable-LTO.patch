@@ -1,4 +1,4 @@
-From 9a2f0b4a0b12eda9b05bb632140fee1a8c309f58 Mon Sep 17 00:00:00 2001
+From c051981421aab5e7e6ce256442f458ead27e89a8 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Sun, 18 Jul 2021 11:29:24 +0500
 Subject: [PATCH 3/3] Disable LTO
