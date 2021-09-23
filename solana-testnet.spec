@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      0
 # git ca83167cfcc4f5cdb0837bf04d99041e7377c516
 Version:    1.7.12
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -415,7 +415,11 @@ exit 0
 
 
 %changelog
-* Thu Sep 21 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.12-2
+* Thu Sep 23 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.12-3
+- Rebuild on f35 with newer rocksdb
+- Improve "activate" script
+
+* Tue Sep 21 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.12-2
 - Keep log files for 14 days instead of 7
 
 * Thu Sep 16 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.12-1
