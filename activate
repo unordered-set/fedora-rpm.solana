@@ -1,1 +1,2 @@
-export PATH="/opt/solana/__SUFFIX__/bin:${PATH}"
+PATH="/opt/solana/__SUFFIX__/bin:${PATH}"
+export PATH
