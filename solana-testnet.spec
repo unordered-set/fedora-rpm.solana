@@ -16,9 +16,9 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git ca83167cfcc4f5cdb0837bf04d99041e7377c516
-Version:    1.7.12
-Release:    3%{?dist}
+# git 257ddbeee1e8e7db2daa54e86f8eeedf76ace8f1
+Version:    1.7.13
+Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -68,6 +68,7 @@ BuildRequires:  zlib-devel
 BuildRequires:  bzip2-devel
 BuildRequires:  lz4-devel
 BuildRequires:  hidapi-devel
+BuildRequires:  jemalloc-devel
 BuildRequires:  rocksdb-devel
 BuildRequires:  libzstd-devel
 
@@ -172,6 +173,8 @@ rm -r vendor/bzip2-sys/bzip2-*
 %{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
 rm -r vendor/hidapi/etc/hidapi
 %{python} %{SOURCE100} vendor/hidapi '^etc/hidapi/.*'
+rm -r vendor/tikv-jemalloc-sys/jemalloc
+%{python} %{SOURCE100} vendor/tikv-jemalloc-sys '^jemalloc/.*'
 rm -r vendor/librocksdb-sys/bzip2
 rm -r vendor/librocksdb-sys/lz4
 rm -r vendor/librocksdb-sys/rocksdb
@@ -191,6 +194,7 @@ cp %{SOURCE2} .cargo/
 
 
 %build
+export JEMALLOC_OVERRIDE=%{_libdir}/libjemalloc.so
 export ROCKSDB_INCLUDE_DIR=%{_includedir}
 export ROCKSDB_LIB_DIR=%{_libdir}
 export LZ4_INCLUDE_DIR=%{_includedir}
@@ -415,6 +419,9 @@ exit 0
 
 
 %changelog
+* Wed Sep 29 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.13-1
+- Update to 1.7.13
+
 * Thu Sep 23 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.12-3
 - Rebuild on f35 with newer rocksdb
 - Improve "activate" script

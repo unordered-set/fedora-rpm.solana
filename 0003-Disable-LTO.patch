@@ -1,4 +1,4 @@
-From d70a6f039231465e23814a037b0fe9e12bd913c4 Mon Sep 17 00:00:00 2001
+From 75f28aa58116bae2270372bd52b31f478eec6983 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Sun, 18 Jul 2021 11:29:24 +0500
 Subject: [PATCH 3/3] Disable LTO
@@ -18,5 +18,5 @@ index d0992a8cfafd..eb9eb7115cd2 100644
 -lto = "fat"
 -codegen-units = 1
 -- 
-2.31.1
+2.32.0
 

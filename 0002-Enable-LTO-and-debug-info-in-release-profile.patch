@@ -1,4 +1,4 @@
-From c2b1fca0ae9f836af0e1def4b10e94540f3434ef Mon Sep 17 00:00:00 2001
+From 500bd518c1b55d72e908a4285fce215f69508019 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 20:10:01 +0500
 Subject: [PATCH 2/3] Enable LTO and debug info in release profile
@@ -22,5 +22,5 @@ index 4d3e377cbbb9..d0992a8cfafd 100644
 +lto = "fat"
 +codegen-units = 1
 -- 
-2.31.1
+2.32.0
 
