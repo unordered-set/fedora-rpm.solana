@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git c5d174c1701b795d702654a76ddd458c4d8b97ea
-Version:    1.6.27
+# git 5bdb8242674cd440ae5d0a5300cd01f35fa5c375
+Version:    1.7.14
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -46,6 +46,10 @@ Source100:  filter-cargo-checksum
 Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
 Patch2: 0003-Disable-LTO.patch
+
+Patch3: 0001-Fix-libc-error-detection-182.patch
+Patch4: 0002-Use-mmap-instead-of-memalign-184.patch
+Patch5: fix-rbpf-crate-checksums.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -160,14 +164,17 @@ cp Cargo.toml Cargo.toml.lto
 %patch2 -p1
 cp Cargo.toml Cargo.toml.no-lto
 
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
 %{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
 rm -r vendor/hidapi/etc/hidapi
 %{python} %{SOURCE100} vendor/hidapi '^etc/hidapi/.*'
-rm -r vendor/jemalloc-sys/jemalloc
-rm -r vendor/jemalloc-sys/rep
-%{python} %{SOURCE100} vendor/jemalloc-sys '^jemalloc/.*' '^rep/.*'
+rm -r vendor/tikv-jemalloc-sys/jemalloc
+%{python} %{SOURCE100} vendor/tikv-jemalloc-sys '^jemalloc/.*'
 rm -r vendor/librocksdb-sys/bzip2
 rm -r vendor/librocksdb-sys/lz4
 rm -r vendor/librocksdb-sys/rocksdb
@@ -237,6 +244,8 @@ sed 's,__SUFFIX__,%{solana_suffix},g' \
         <%{SOURCE9} \
         >solana-validator.logrotate
 
+./target/release/solana completion --shell bash >solana.bash-completion
+
 
 %install
 mkdir -p %{buildroot}/opt/solana/%{solana_suffix}/bin/deps
@@ -286,6 +295,8 @@ mv target/release/*.so \
 mv target/release/* \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/
 
+mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.bash-completion
+
 
 %files common
 %dir /opt/solana
@@ -301,8 +312,8 @@ mv target/release/* \
 /opt/solana/%{solana_suffix}/bin/solana-gossip
 /opt/solana/%{solana_suffix}/bin/solana-ip-address
 /opt/solana/%{solana_suffix}/bin/solana-stake-accounts
-/opt/solana/%{solana_suffix}/bin/solana-stake-o-matic
 /opt/solana/%{solana_suffix}/bin/solana-tokens
+/opt/solana/%{solana_suffix}/bin/solana.bash-completion
 
 
 %files utils
@@ -324,7 +335,6 @@ mv target/release/* \
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 %dir /opt/solana/%{solana_suffix}/bin/deps
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_budget_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_failure_program.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_noop_program.so
@@ -379,7 +389,6 @@ mv target/release/* \
 /opt/solana/%{solana_suffix}/bin/solana-merkle-root-bench
 /opt/solana/%{solana_suffix}/bin/solana-poh-bench
 /opt/solana/%{solana_suffix}/bin/solana-test-validator
-/opt/solana/%{solana_suffix}/bin/solana-ramp-tps
 
 
 %pre daemons
@@ -410,6 +419,9 @@ exit 0
 
 
 %changelog
+* Thu Sep 30 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.7.14-100
+- Update to 1.7.14
+
 * Tue Sep 28 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.6.27-100
 - Update to 1.6.27
 

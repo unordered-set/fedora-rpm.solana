@@ -1,2 +1,15 @@
 PATH="/opt/solana/__SUFFIX__/bin:${PATH}"
 export PATH
+
+# Check for interactive bash.
+if [ "x${BASH_VERSION-}" != x -a "x${PS1-}" != x ]; then
+    # Check for recent enough version of bash.
+    if [ "${BASH_VERSINFO[0]}" -gt 4 ] ||
+            [ "${BASH_VERSINFO[0]}" -eq 4 -a "${BASH_VERSINFO[1]}" -ge 2 ]; then
+        if shopt -q progcomp; then
+            if [ -e "/opt/solana/__SUFFIX__/bin/solana.bash-completion" ]; then
+                source "/opt/solana/__SUFFIX__/bin/solana.bash-completion"
+            fi
+        fi
+    fi
+fi
