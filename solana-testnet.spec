@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 5bdb8242674cd440ae5d0a5300cd01f35fa5c375
-Version:    1.7.14
+# git 4a8ff62ad35d0a078dac584147d37abf98f364f8
+Version:    1.8.0
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -43,13 +43,14 @@ Source9:    solana-validator.logrotate
 
 Source100:  filter-cargo-checksum
 
-Patch0: 0001-Replace-bundled-C-C-libraries-with-system-provided.patch
-Patch1: 0002-Enable-LTO-and-debug-info-in-release-profile.patch
-Patch2: 0003-Disable-LTO.patch
+Patch1001: 0001-Enable-debug-info-in-release-profile.patch
+Patch1002: 0002-Enable-LTO.patch
 
-Patch3: 0001-Fix-libc-error-detection-182.patch
-Patch4: 0002-Use-mmap-instead-of-memalign-184.patch
-Patch5: fix-rbpf-crate-checksums.patch
+Patch2001: 0003-Replace-bundled-C-C-libraries-with-system-provided.patch
+
+Patch3001: 0001-Fix-libc-error-detection-182.patch
+Patch3002: 0002-Use-mmap-instead-of-memalign-184.patch
+Patch3003: fix-rbpf-crate-checksums.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -158,15 +159,15 @@ Solana tests and benchmarks (%{solana_suffix} version).
 %autosetup -N -b0 -n solana-%{version}
 %autosetup -N -b1 -n solana-%{version}
 
-%patch0 -p1
-%patch1 -p1
-cp Cargo.toml Cargo.toml.lto
-%patch2 -p1
+%patch1001 -p1
 cp Cargo.toml Cargo.toml.no-lto
+%patch1002 -p1
 
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
+%patch2001 -p1
+
+%patch3001 -p1
+%patch3002 -p1
+%patch3003 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -201,7 +202,6 @@ export LZ4_INCLUDE_DIR=%{_includedir}
 export LZ4_LIB_DIR=%{_libdir}
 
 # First, build binaries optimized for newer CPUs.
-cp Cargo.toml.lto Cargo.toml
 export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
 %{__cargo} build %{?_smp_mflags} -Z avoid-dev-deps --frozen --release \
         --package solana-validator \
@@ -419,6 +419,9 @@ exit 0
 
 
 %changelog
+* Thu Oct 7 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.0-1
+- Update to 1.8.0
+
 * Thu Sep 30 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.7.14-1
 - Update to 1.7.14
 
