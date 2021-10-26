@@ -1,22 +1,22 @@
-From c9dbe17c06b2514c098c163d4a0f3722d465b2e3 Mon Sep 17 00:00:00 2001
+From aec17b28aa67ec0f43e936fca9d14dd565bedd3e Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 7 Oct 2021 07:57:32 +0500
-Subject: [PATCH 2/3] Enable LTO
+Subject: [PATCH 2/5] Enable LTO
 
 ---
  Cargo.toml | 2 ++
  1 file changed, 2 insertions(+)
 
 diff --git a/Cargo.toml b/Cargo.toml
-index 6da904df5cf2..6ff3dc983f2d 100644
+index 31c5845ec11c..09bc4e990441 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -88,3 +88,5 @@ split-debuginfo = "unpacked"
+@@ -89,3 +89,5 @@ split-debuginfo = "unpacked"
  [profile.release]
  opt-level = 3
  debug = true
 +lto = "fat"
 +codegen-units = 1
 -- 
-2.32.0
+2.33.0
 

@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 4a8ff62ad35d0a078dac584147d37abf98f364f8
-Version:    1.8.0
+# git 8cba6cca762bc2fd036302e9f5d005af88a0bbf8
+Version:    1.8.1
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -51,6 +51,9 @@ Patch2001: 0003-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch3001: 0001-Fix-libc-error-detection-182.patch
 Patch3002: 0002-Use-mmap-instead-of-memalign-184.patch
 Patch3003: fix-rbpf-crate-checksums.patch
+
+Patch4001: 0004-Add-validator-option-to-change-niceness-of-snapshot-.patch
+Patch4002: 0005-Add-watchtower-option-to-add-custom-string-into-noti.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -169,6 +172,9 @@ cp Cargo.toml Cargo.toml.no-lto
 %patch3002 -p1
 %patch3003 -p1
 
+%patch4001 -p1
+%patch4002 -p1
+
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
 %{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
@@ -211,8 +217,6 @@ export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
         --package solana-merkle-root-bench \
         --package solana-poh-bench \
         --package solana-exchange-program \
-        --package solana-failure-program \
-        --package solana-noop-program
 
 mv target/release ./release.newer-cpus
 %{__cargo} clean
@@ -288,7 +292,7 @@ rm target/release/*.rlib
 rm target/release/solana-install target/release/solana-install-init target/release/solana-ledger-udev
 # Excluded. 
 # TODO: Why? Official binary release does not contain these, only libsolana_*_program.so installed.
-rm target/release/libsolana_frozen_abi_macro.so target/release/libsolana_ownable.so target/release/libsolana_sdk_macro.so
+rm target/release/libsolana_frozen_abi_macro.so target/release/libsolana_sdk_macro.so
 
 mv target/release/*.so \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/deps/
@@ -335,9 +339,8 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 %dir /opt/solana/%{solana_suffix}/bin/deps
+/opt/solana/%{solana_suffix}/bin/deps/libsolana_accountsdb_plugin_postgres.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_failure_program.so
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_noop_program.so
 
 
 %files daemons
@@ -419,6 +422,9 @@ exit 0
 
 
 %changelog
+* Tue Oct 26 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.1-1
+- Update to 1.8.1
+
 * Thu Oct 7 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.0-1
 - Update to 1.8.0
 
