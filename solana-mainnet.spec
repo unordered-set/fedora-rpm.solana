@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git 4892eb4e1ad278d5249b6cda8983f88effb3e98b
-Version:    1.7.15
+# git 8cba6cca762bc2fd036302e9f5d005af88a0bbf8
+Version:    1.8.1
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -51,6 +51,12 @@ Patch2001: 0003-Replace-bundled-C-C-libraries-with-system-provided.patch
 Patch3001: 0001-Fix-libc-error-detection-182.patch
 Patch3002: 0002-Use-mmap-instead-of-memalign-184.patch
 Patch3003: fix-rbpf-crate-checksums.patch
+
+Patch4001: 0004-Add-watchtower-option-to-add-custom-string-into-noti.patch
+
+Patch5001: 0001-Add-function-for-changing-thread-s-nice-value.patch
+Patch5002: 0002-Add-validator-option-to-change-niceness-of-snapshot-.patch
+Patch5003: 0003-Add-validator-option-to-change-niceness-of-RPC-serve.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -169,6 +175,12 @@ cp Cargo.toml Cargo.toml.no-lto
 %patch3002 -p1
 %patch3003 -p1
 
+%patch4001 -p1
+
+%patch5001 -p1
+%patch5002 -p1
+%patch5003 -p1
+
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
 %{python} %{SOURCE100} vendor/bzip2-sys '^bzip2-.*'
@@ -211,8 +223,7 @@ export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
         --package solana-merkle-root-bench \
         --package solana-poh-bench \
         --package solana-exchange-program \
-        --package solana-failure-program \
-        --package solana-noop-program
+        --package solana-accountsdb-plugin-postgres
 
 mv target/release ./release.newer-cpus
 %{__cargo} clean
@@ -288,7 +299,7 @@ rm target/release/*.rlib
 rm target/release/solana-install target/release/solana-install-init target/release/solana-ledger-udev
 # Excluded. 
 # TODO: Why? Official binary release does not contain these, only libsolana_*_program.so installed.
-rm target/release/libsolana_frozen_abi_macro.so target/release/libsolana_ownable.so target/release/libsolana_sdk_macro.so
+rm target/release/libsolana_frozen_abi_macro.so target/release/libsolana_sdk_macro.so
 
 mv target/release/*.so \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/deps/
@@ -335,9 +346,8 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
 %dir /opt/solana/%{solana_suffix}/bin/deps
+/opt/solana/%{solana_suffix}/bin/deps/libsolana_accountsdb_plugin_postgres.so
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_failure_program.so
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_noop_program.so
 
 
 %files daemons
@@ -419,6 +429,9 @@ exit 0
 
 
 %changelog
+* Wed Oct 27 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.1-100
+- Update to 1.8.1
+
 * Fri Oct 8 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.7.15-100
 - Update to 1.7.15
 

@@ -1,17 +1,17 @@
-From b530bc7edf9fe4ff37302436123693b1cf1db013 Mon Sep 17 00:00:00 2001
+From 4d72d1baddd0b4ff284875e9f9a7d17b53e849c1 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 20:10:01 +0500
-Subject: [PATCH 1/3] Enable debug info in release profile
+Subject: [PATCH 1/4] Enable debug info in release profile
 
 ---
  Cargo.toml | 4 ++++
  1 file changed, 4 insertions(+)
 
 diff --git a/Cargo.toml b/Cargo.toml
-index 4d3e377cbbb9..eb9eb7115cd2 100644
+index 6e01beaeea2f..31c5845ec11c 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -83,3 +83,7 @@ resolver = "2"
+@@ -85,3 +85,7 @@ resolver = "2"
  
  [profile.dev]
  split-debuginfo = "unpacked"

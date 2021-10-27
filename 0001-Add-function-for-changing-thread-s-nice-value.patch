@@ -1,0 +1,144 @@
+From e9d6bd4106ea985a8eba516efd26d4f106937bbc Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Wed, 27 Oct 2021 06:07:37 +0500
+Subject: [PATCH 1/3] Add function for changing thread's nice value
+
+Linux only.
+---
+ Cargo.lock         |  2 ++
+ perf/Cargo.toml    |  4 +++
+ perf/src/lib.rs    |  1 +
+ perf/src/thread.rs | 79 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 86 insertions(+)
+ create mode 100644 perf/src/thread.rs
+
+diff --git a/Cargo.lock b/Cargo.lock
+index af5d749c9358..4093022ade71 100644
+--- a/Cargo.lock
++++ b/Cargo.lock
+@@ -5174,8 +5174,10 @@ dependencies = [
+  "dlopen",
+  "dlopen_derive",
+  "lazy_static",
++ "libc",
+  "log 0.4.14",
+  "matches",
++ "nix 0.20.2",
+  "rand 0.7.3",
+  "rayon",
+  "serde",
+diff --git a/perf/Cargo.toml b/perf/Cargo.toml
+index 99733563a47d..d9a21aa360d5 100644
+--- a/perf/Cargo.toml
++++ b/perf/Cargo.toml
+@@ -25,6 +25,10 @@ solana-sdk = { path = "../sdk", version = "=1.8.1" }
+ solana-rayon-threadlimit = { path = "../rayon-threadlimit", version = "=1.8.1" }
+ solana-vote-program = { path = "../programs/vote", version = "=1.8.1" }
+ 
++[target."cfg(target_os = \"linux\")".dependencies]
++libc = "0.2.81"
++nix = "0.20.0"
++
+ [lib]
+ name = "solana_perf"
+ 
+diff --git a/perf/src/lib.rs b/perf/src/lib.rs
+index b98490d30434..e5352a6fd0f8 100644
+--- a/perf/src/lib.rs
++++ b/perf/src/lib.rs
+@@ -6,6 +6,7 @@ pub mod recycler;
+ pub mod recycler_cache;
+ pub mod sigverify;
+ pub mod test_tx;
++pub mod thread;
+ 
+ #[macro_use]
+ extern crate lazy_static;
+diff --git a/perf/src/thread.rs b/perf/src/thread.rs
+new file mode 100644
+index 000000000000..1e3b017961f1
+--- /dev/null
++++ b/perf/src/thread.rs
+@@ -0,0 +1,79 @@
++/// Wrapper for `nice(3)`.
++#[cfg(target_os = "linux")]
++fn nice(adjustment: i8) -> Result<i8, nix::errno::Errno> {
++    use std::convert::TryInto;
++
++    unsafe {
++        *libc::__errno_location() = 0;
++        let niceness = libc::nice(adjustment.into());
++        let errno = *libc::__errno_location();
++        if (niceness == -1) && (errno != 0) {
++            Err(errno)
++        } else {
++            Ok(niceness)
++        }
++    }
++    .map(|niceness| niceness.try_into().expect("Unexpected niceness value"))
++    .map_err(nix::errno::from_i32)
++}
++
++/// Adds `adjustment` to the nice value of calling thread. Negative `adjustment` increases priority,
++/// positive `adjustment` decreases priority. New thread inherits nice value from current thread
++/// when created.
++///
++/// Does nothing on non-Linux systems.
++#[cfg(target_os = "linux")]
++pub fn renice_this_thread(adjustment: i8) -> Result<(), String> {
++    // On Linux, the nice value is a per-thread attribute. See `man 7 sched` for details.
++    // Other systems probably should use pthread_setschedprio(), but, on Linux, thread priority
++    // is fixed to zero for SCHED_OTHER threads (which is the default).
++    nice(adjustment)
++        .map(|_| ())
++        .map_err(|err| format!("Failed to change thread's nice value: {}", err))
++}
++
++/// Adds `adjustment` to the nice value of calling thread. Negative `adjustment` increases priority,
++/// positive `adjustment` decreases priority. New thread inherits nice value from current thread
++/// when created.
++///
++/// Does nothing on non-Linux systems.
++#[cfg(not(target_os = "linux"))]
++pub fn renice_this_thread(adjustment: i8) -> Result<(), String> {
++    if adjustment != 0 {
++        warn!("Unable to change thread's nice value: only supported on Linux");
++    }
++    Ok(())
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[cfg(target_os = "linux")]
++    #[test]
++    fn test_nice() {
++        // No change / get current niceness
++        let niceness = nice(0).unwrap();
++
++        // Decrease priority (allowed for unprivileged processes)
++        let result = std::thread::spawn(|| nice(1)).join().unwrap();
++        assert_eq!(result, Ok(niceness + 1));
++
++        // Sanity check: ensure that current thread's nice value not changed after previous call
++        // from different thread
++        assert_eq!(nice(0), Ok(niceness));
++
++        // Sanity check: ensure that new thread inherits nice value from current thread
++        let inherited_niceness = std::thread::spawn(|| {
++            nice(1).unwrap();
++            std::thread::spawn(|| nice(0).unwrap()).join().unwrap()
++        })
++        .join()
++        .unwrap();
++        assert_eq!(inherited_niceness, niceness + 1);
++
++        // Increase priority (not allowed for unprivileged processes)
++        let result = std::thread::spawn(|| nice(-1)).join().unwrap();
++        assert!(result.is_err());
++    }
++}
+-- 
+2.33.0
+
