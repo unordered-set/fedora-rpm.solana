@@ -223,6 +223,7 @@ export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
         --package solana-merkle-root-bench \
         --package solana-poh-bench \
         --package solana-exchange-program \
+        --package solana-accountsdb-plugin-postgres
 
 mv target/release ./release.newer-cpus
 %{__cargo} clean
@@ -430,6 +431,7 @@ exit 0
 %changelog
 * Wed Oct 27 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.1-2
 - Update patches
+- Optimize solana-accountsdb-plugin-postgres for newer CPUs
 
 * Tue Oct 26 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.1-1
 - Update to 1.8.1
