@@ -1,136 +1,47 @@
-From 8d83dbd028b6bd8e2ce2ae86d9d5d61de19f2a2f Mon Sep 17 00:00:00 2001
+From 883144ab3bc20a1604f387df8de6807d22417a22 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
-Date: Mon, 25 Oct 2021 10:51:34 +0500
-Subject: [PATCH 4/5] Add validator option to change niceness of snapshot
+Date: Wed, 27 Oct 2021 09:33:40 +0500
+Subject: [PATCH 2/3] Add validator option to change niceness of snapshot
  packager thread
 
-Linux only.
 ---
- Cargo.lock                            |  1 +
- core/Cargo.toml                       |  3 ++
- core/src/snapshot_packager_service.rs | 56 +++++++++++++++++++++++++++
+ core/src/snapshot_packager_service.rs |  3 +++
  core/src/test_validator.rs            |  1 +
  core/src/validator.rs                 |  1 +
- core/tests/snapshots.rs               |  2 +
+ core/tests/snapshots.rs               |  2 ++
  ledger-tool/src/main.rs               |  1 +
  local-cluster/tests/local_cluster.rs  |  1 +
  rpc/src/rpc_service.rs                |  1 +
- runtime/src/bank_forks.rs             |  3 ++
- validator/src/main.rs                 | 11 ++++++
- 11 files changed, 81 insertions(+)
+ runtime/src/bank_forks.rs             |  3 +++
+ validator/src/main.rs                 | 12 ++++++++++++
+ 9 files changed, 25 insertions(+)
 
-diff --git a/Cargo.lock b/Cargo.lock
-index af5d749c9358..b282654b5338 100644
---- a/Cargo.lock
-+++ b/Cargo.lock
-@@ -4580,6 +4580,7 @@ dependencies = [
-  "matches",
-  "miow 0.2.2",
-  "net2",
-+ "nix 0.20.2",
-  "num-traits",
-  "num_cpus",
-  "rand 0.7.3",
-diff --git a/core/Cargo.toml b/core/Cargo.toml
-index 461f1dceb210..78c34cfdde5d 100644
---- a/core/Cargo.toml
-+++ b/core/Cargo.toml
-@@ -74,6 +74,9 @@ thiserror = "1.0"
- solana-rayon-threadlimit = { path = "../rayon-threadlimit", version = "=1.8.1" }
- trees = "0.2.1"
- 
-+[target."cfg(target_os = \"linux\")".dependencies]
-+nix = "0.20.0"
-+
- [dev-dependencies]
- jsonrpc-core = "18.0.0"
- jsonrpc-core-client = { version = "18.0.0", features = ["ipc", "ws"] }
 diff --git a/core/src/snapshot_packager_service.rs b/core/src/snapshot_packager_service.rs
-index a2439708f421..4e9f3910dd3b 100644
+index a2439708f421..fbc5a163b6ed 100644
 --- a/core/src/snapshot_packager_service.rs
 +++ b/core/src/snapshot_packager_service.rs
-@@ -10,6 +10,45 @@ use std::{
-     time::Duration,
- };
- 
-+#[cfg(target_os = "linux")]
-+fn nice(adjustment: i8) -> Result<(), nix::errno::Errno> {
-+    let error = unsafe {
-+        *libc::__errno_location() = 0;
-+        let new_niceness = libc::nice(adjustment.into());
-+        let errno = *libc::__errno_location();
-+        if (new_niceness == -1) && (errno != 0) {
-+            errno
-+        } else {
-+            0
-+        }
-+    };
-+    if error == 0 {
-+        Ok(())
-+    } else {
-+        Err(nix::errno::from_i32(error.into()))
-+    }
-+}
-+
-+#[cfg(target_os = "linux")]
-+fn change_thread_niceness(adjustment: i8) {
-+    // On Linux, the nice value is a per-thread attribute. See `man 7 sched` for details.
-+    // Other systems probably should use pthread_setschedprio(), but, on Linux, thread priority
-+    // is fixed to zero for SCHED_OTHER threads (which is the default).
-+    nice(adjustment)
-+        .map_err(|err| {
-+            error!("Failed to change thread niceness for snapshot packager service");
-+            err
-+        })
-+        .unwrap();
-+}
-+
-+#[cfg(not(target_os = "linux"))]
-+fn change_thread_niceness(adjustment: i8) {
-+    if adjustment != 0 {
-+        warn!("Unable to change thread niceness for snapshot packager service: only supported on Linux");
-+    }
-+}
-+
- pub type PendingSnapshotPackage = Arc<Mutex<Option<AccountsPackage>>>;
- 
- pub struct SnapshotPackagerService {
-@@ -23,6 +62,7 @@ impl SnapshotPackagerService {
+@@ -1,4 +1,5 @@
+ use solana_gossip::cluster_info::{ClusterInfo, MAX_SNAPSHOT_HASHES};
++use solana_perf::thread::renice_this_thread;
+ use solana_runtime::{snapshot_package::AccountsPackage, snapshot_utils};
+ use solana_sdk::{clock::Slot, hash::Hash};
+ use std::{
+@@ -23,6 +24,7 @@ impl SnapshotPackagerService {
          exit: &Arc<AtomicBool>,
          cluster_info: &Arc<ClusterInfo>,
          maximum_snapshots_to_retain: usize,
-+        thread_niceness_adj: i8,
++        niceness_adj: i8,
      ) -> Self {
          let exit = exit.clone();
          let cluster_info = cluster_info.clone();
-@@ -30,6 +70,7 @@ impl SnapshotPackagerService {
+@@ -30,6 +32,7 @@ impl SnapshotPackagerService {
          let t_snapshot_packager = Builder::new()
              .name("snapshot-packager".to_string())
              .spawn(move || {
-+                change_thread_niceness(thread_niceness_adj);
++                renice_this_thread(niceness_adj).unwrap();
                  let mut hashes = vec![];
                  if let Some(starting_snapshot_hash) = starting_snapshot_hash {
                      hashes.push(starting_snapshot_hash);
-@@ -202,4 +243,19 @@ mod tests {
-             ArchiveFormat::TarBzip2,
-         );
-     }
-+
-+    #[cfg(target_os = "linux")]
-+    #[test]
-+    fn test_nice() {
-+        // No change
-+        assert!(nice(0).is_ok());
-+
-+        // Decrease priority (allowed for unprivileged processes)
-+        let result = std::thread::spawn(|| nice(1)).join().unwrap();
-+        assert!(result.is_ok());
-+
-+        // Increase priority (not allowed for unprivileged processes)
-+        let result = std::thread::spawn(|| nice(-1)).join().unwrap();
-+        assert!(result.is_err());
-+    }
- }
 diff --git a/core/src/test_validator.rs b/core/src/test_validator.rs
 index 86fcfd738e1b..2562acbf94c0 100644
 --- a/core/src/test_validator.rs
@@ -226,38 +137,39 @@ index 012f7244fd7c..6bd04f399301 100644
  
  pub struct BankForks {
 diff --git a/validator/src/main.rs b/validator/src/main.rs
-index 368fa2d6a9e4..ea42eb85f0da 100644
+index 368fa2d6a9e4..fba2a4009462 100644
 --- a/validator/src/main.rs
 +++ b/validator/src/main.rs
-@@ -1382,6 +1382,14 @@ pub fn main() {
+@@ -1382,6 +1382,15 @@ pub fn main() {
                  .default_value(default_max_snapshot_to_retain)
                  .help("The maximum number of snapshots to hold on to when purging older snapshots.")
          )
 +        .arg(
-+            Arg::with_name("snapshot_packager_thread_niceness_adj")
-+                .long("snapshot-packager-thread-niceness-adjustment")
-+                .value_name("NICE")
++            Arg::with_name("snapshot_packager_niceness_adj")
++                .long("snapshot-packager-niceness-adjustment")
++                .value_name("ADJUSTMENT")
 +                .takes_value(true)
 +                .default_value("0")
-+                .help("Add this value to thread niceness of snapshot packager service.")
++                .help("Add this value to niceness of snapshot packager thread. Negative value \
++                      increases priority, positive value decreases priority.")
 +        )
          .arg(
              Arg::with_name("minimal_snapshot_download_speed")
                  .long("minimal-snapshot-download-speed")
-@@ -2549,6 +2557,8 @@ pub fn main() {
+@@ -2549,6 +2558,8 @@ pub fn main() {
      let maximum_local_snapshot_age = value_t_or_exit!(matches, "maximum_local_snapshot_age", u64);
      let maximum_snapshots_to_retain =
          value_t_or_exit!(matches, "maximum_snapshots_to_retain", usize);
-+    let snapshot_packager_thread_niceness_adj =
-+        value_t_or_exit!(matches, "snapshot_packager_thread_niceness_adj", i8);
++    let snapshot_packager_niceness_adj =
++        value_t_or_exit!(matches, "snapshot_packager_niceness_adj", i8);
      let minimal_snapshot_download_speed =
          value_t_or_exit!(matches, "minimal_snapshot_download_speed", f32);
      let maximum_snapshot_download_abort =
-@@ -2599,6 +2609,7 @@ pub fn main() {
+@@ -2599,6 +2610,7 @@ pub fn main() {
          archive_format,
          snapshot_version,
          maximum_snapshots_to_retain,
-+        packager_thread_niceness_adj: snapshot_packager_thread_niceness_adj,
++        packager_thread_niceness_adj: snapshot_packager_niceness_adj,
      });
  
      validator_config.accounts_hash_interval_slots =

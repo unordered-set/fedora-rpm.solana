@@ -1,0 +1,93 @@
+From e68b6cb125871af77a8da0aefd0e804871686640 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Wed, 27 Oct 2021 08:13:19 +0500
+Subject: [PATCH 3/3] Add validator option to change niceness of RPC server
+ threads
+
+Fixes https://github.com/solana-labs/solana/issues/14556
+---
+ rpc/src/rpc.rs         |  1 +
+ rpc/src/rpc_service.rs |  5 +++++
+ validator/src/main.rs  | 10 ++++++++++
+ 3 files changed, 16 insertions(+)
+
+diff --git a/rpc/src/rpc.rs b/rpc/src/rpc.rs
+index a6975f4cde01..af62f1b516bb 100644
+--- a/rpc/src/rpc.rs
++++ b/rpc/src/rpc.rs
+@@ -139,6 +139,7 @@ pub struct JsonRpcConfig {
+     pub max_multiple_accounts: Option<usize>,
+     pub account_indexes: AccountSecondaryIndexes,
+     pub rpc_threads: usize,
++    pub rpc_niceness_adj: i8,
+     pub rpc_bigtable_timeout: Option<Duration>,
+     pub minimal_api: bool,
+     pub obsolete_v1_7_api: bool,
+diff --git a/rpc/src/rpc_service.rs b/rpc/src/rpc_service.rs
+index 69e8db83c22a..4db4a28db4ea 100644
+--- a/rpc/src/rpc_service.rs
++++ b/rpc/src/rpc_service.rs
+@@ -21,6 +21,7 @@ use {
+         leader_schedule_cache::LeaderScheduleCache,
+     },
+     solana_metrics::inc_new_counter_info,
++    solana_perf::thread::renice_this_thread,
+     solana_poh::poh_recorder::PohRecorder,
+     solana_runtime::{
+         bank_forks::{BankForks, SnapshotConfig},
+@@ -288,6 +289,7 @@ impl JsonRpcService {
+         info!("rpc bound to {:?}", rpc_addr);
+         info!("rpc configuration: {:?}", config);
+         let rpc_threads = 1.max(config.rpc_threads);
++        let rpc_niceness_adj = config.rpc_niceness_adj;
+ 
+         let health = Arc::new(RpcHealth::new(
+             cluster_info.clone(),
+@@ -311,6 +313,7 @@ impl JsonRpcService {
+         let runtime = Arc::new(
+             tokio::runtime::Builder::new_multi_thread()
+                 .worker_threads(rpc_threads)
++                .on_thread_start(move || renice_this_thread(rpc_niceness_adj).unwrap())
+                 .thread_name("sol-rpc-el")
+                 .enable_all()
+                 .build()
+@@ -394,6 +397,8 @@ impl JsonRpcService {
+         let thread_hdl = Builder::new()
+             .name("solana-jsonrpc".to_string())
+             .spawn(move || {
++                renice_this_thread(rpc_niceness_adj).unwrap();
++
+                 let mut io = MetaIoHandler::default();
+ 
+                 io.extend_with(rpc_minimal::MinimalImpl.to_delegate());
+diff --git a/validator/src/main.rs b/validator/src/main.rs
+index fba2a4009462..5b817a994821 100644
+--- a/validator/src/main.rs
++++ b/validator/src/main.rs
+@@ -1630,6 +1630,15 @@ pub fn main() {
+                 .default_value(&default_rpc_threads)
+                 .help("Number of threads to use for servicing RPC requests"),
+         )
++        .arg(
++            Arg::with_name("rpc_niceness_adj")
++                .long("rpc-niceness-adjustment")
++                .value_name("ADJUSTMENT")
++                .takes_value(true)
++                .default_value("0")
++                .help("Add this value to niceness of RPC threads. Negative value \
++                      increases priority, positive value decreases priority.")
++        )
+         .arg(
+             Arg::with_name("rpc_bigtable_timeout")
+                 .long("rpc-bigtable-timeout")
+@@ -2405,6 +2414,7 @@ pub fn main() {
+                 u64
+             ),
+             rpc_threads: value_t_or_exit!(matches, "rpc_threads", usize),
++            rpc_niceness_adj: value_t_or_exit!(matches, "rpc_niceness_adj", i8),
+             rpc_bigtable_timeout: value_t!(matches, "rpc_bigtable_timeout", u64)
+                 .ok()
+                 .map(Duration::from_secs),
+-- 
+2.33.0
+

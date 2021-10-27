@@ -1,7 +1,7 @@
-From 0f6fba21a2c7dbeefb5eb929fd7e956a350fb403 Mon Sep 17 00:00:00 2001
+From 1f48a62a70f21307f1c1ea7ee41dbd7e81437be9 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Tue, 26 Oct 2021 12:03:04 +0500
-Subject: [PATCH 5/5] Add watchtower option to add custom string into
+Subject: [PATCH 4/4] Add watchtower option to add custom string into
  notifications
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 5/5] Add watchtower option to add custom string into
  1 file changed, 17 insertions(+), 3 deletions(-)
 
 diff --git a/watchtower/src/main.rs b/watchtower/src/main.rs
-index 3dd06dd8aaa5..8554f6dc5709 100644
+index 3dd06dd8aaa5..a8a7424e9c31 100644
 --- a/watchtower/src/main.rs
 +++ b/watchtower/src/main.rs
 @@ -34,6 +34,7 @@ struct Config {
@@ -29,7 +29,7 @@ index 3dd06dd8aaa5..8554f6dc5709 100644
 +                .long("name-suffix")
 +                .value_name("SUFFIX")
 +                .takes_value(true)
-+                .help("Add this string into all notification messages after \"^solana-watchtower\".")
++                .help("Add this string into all notification messages after \"^solana-watchtower\"")
 +        )
          .get_matches();
  

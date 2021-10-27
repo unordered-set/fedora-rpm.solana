@@ -1,7 +1,7 @@
 From d6d3fb7e6311f84549b82acc51d87eafb0d76260 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 17:17:32 +0500
-Subject: [PATCH 3/5] Replace bundled C/C++ libraries with system provided
+Subject: [PATCH 3/4] Replace bundled C/C++ libraries with system provided
 
 ---
  Cargo.lock                  | 13 +++++++------
