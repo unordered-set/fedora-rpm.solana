@@ -1,4 +1,4 @@
-From 1f48a62a70f21307f1c1ea7ee41dbd7e81437be9 Mon Sep 17 00:00:00 2001
+From 9b8e9d9a41f17e48437f61c340d7e2f693f03556 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Tue, 26 Oct 2021 12:03:04 +0500
 Subject: [PATCH 4/4] Add watchtower option to add custom string into

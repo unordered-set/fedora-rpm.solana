@@ -1,4 +1,4 @@
-From 883144ab3bc20a1604f387df8de6807d22417a22 Mon Sep 17 00:00:00 2001
+From e4c4b7fb9c7a98b0a17f69841a7c864f4fad04eb Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 27 Oct 2021 09:33:40 +0500
 Subject: [PATCH 2/3] Add validator option to change niceness of snapshot
@@ -111,10 +111,10 @@ index 4e1e34eae55d..9085458379ca 100644
  
      // Create the account paths
 diff --git a/rpc/src/rpc_service.rs b/rpc/src/rpc_service.rs
-index 531ca3733528..69e8db83c22a 100644
+index 42813e51b9d0..5e733d3a7ec3 100644
 --- a/rpc/src/rpc_service.rs
 +++ b/rpc/src/rpc_service.rs
-@@ -599,6 +599,7 @@ mod tests {
+@@ -600,6 +600,7 @@ mod tests {
                  archive_format: ArchiveFormat::TarBzip2,
                  snapshot_version: SnapshotVersion::default(),
                  maximum_snapshots_to_retain: DEFAULT_MAX_SNAPSHOTS_TO_RETAIN,
