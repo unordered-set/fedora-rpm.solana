@@ -1,4 +1,4 @@
-From 4d72d1baddd0b4ff284875e9f9a7d17b53e849c1 Mon Sep 17 00:00:00 2001
+From 78a6dcde1a2904c162450cf6a0b15c79d2f47176 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 20:10:01 +0500
 Subject: [PATCH 1/4] Enable debug info in release profile

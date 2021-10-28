@@ -1,4 +1,4 @@
-From e68b6cb125871af77a8da0aefd0e804871686640 Mon Sep 17 00:00:00 2001
+From f0b03fe23ac4f288b648d31dabcfb5cbc0fe4577 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 27 Oct 2021 08:13:19 +0500
 Subject: [PATCH 3/3] Add validator option to change niceness of RPC server
@@ -12,7 +12,7 @@ Fixes https://github.com/solana-labs/solana/issues/14556
  3 files changed, 16 insertions(+)
 
 diff --git a/rpc/src/rpc.rs b/rpc/src/rpc.rs
-index a6975f4cde01..af62f1b516bb 100644
+index 18e938e427cd..91bbafd3b4c8 100644
 --- a/rpc/src/rpc.rs
 +++ b/rpc/src/rpc.rs
 @@ -139,6 +139,7 @@ pub struct JsonRpcConfig {
@@ -24,7 +24,7 @@ index a6975f4cde01..af62f1b516bb 100644
      pub minimal_api: bool,
      pub obsolete_v1_7_api: bool,
 diff --git a/rpc/src/rpc_service.rs b/rpc/src/rpc_service.rs
-index 69e8db83c22a..4db4a28db4ea 100644
+index 5e733d3a7ec3..00eabc78f6cf 100644
 --- a/rpc/src/rpc_service.rs
 +++ b/rpc/src/rpc_service.rs
 @@ -21,6 +21,7 @@ use {
