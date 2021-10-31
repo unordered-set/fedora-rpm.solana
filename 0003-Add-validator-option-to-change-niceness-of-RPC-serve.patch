@@ -1,4 +1,4 @@
-From f0b03fe23ac4f288b648d31dabcfb5cbc0fe4577 Mon Sep 17 00:00:00 2001
+From 2a4aafd34f1c50b20b323a948a27089d5d26bc71 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 27 Oct 2021 08:13:19 +0500
 Subject: [PATCH 3/3] Add validator option to change niceness of RPC server
@@ -8,11 +8,11 @@ Fixes https://github.com/solana-labs/solana/issues/14556
 ---
  rpc/src/rpc.rs         |  1 +
  rpc/src/rpc_service.rs |  5 +++++
- validator/src/main.rs  | 10 ++++++++++
- 3 files changed, 16 insertions(+)
+ validator/src/main.rs  | 11 +++++++++++
+ 3 files changed, 17 insertions(+)
 
 diff --git a/rpc/src/rpc.rs b/rpc/src/rpc.rs
-index 18e938e427cd..91bbafd3b4c8 100644
+index 6945e115e5da..59229df21032 100644
 --- a/rpc/src/rpc.rs
 +++ b/rpc/src/rpc.rs
 @@ -139,6 +139,7 @@ pub struct JsonRpcConfig {
@@ -61,10 +61,10 @@ index 5e733d3a7ec3..00eabc78f6cf 100644
  
                  io.extend_with(rpc_minimal::MinimalImpl.to_delegate());
 diff --git a/validator/src/main.rs b/validator/src/main.rs
-index fba2a4009462..5b817a994821 100644
+index ad12a9f7c80c..a11b24302c46 100644
 --- a/validator/src/main.rs
 +++ b/validator/src/main.rs
-@@ -1630,6 +1630,15 @@ pub fn main() {
+@@ -1631,6 +1631,16 @@ pub fn main() {
                  .default_value(&default_rpc_threads)
                  .help("Number of threads to use for servicing RPC requests"),
          )
@@ -73,6 +73,7 @@ index fba2a4009462..5b817a994821 100644
 +                .long("rpc-niceness-adjustment")
 +                .value_name("ADJUSTMENT")
 +                .takes_value(true)
++                .validator(is_niceness_adjustment_valid)
 +                .default_value("0")
 +                .help("Add this value to niceness of RPC threads. Negative value \
 +                      increases priority, positive value decreases priority.")
@@ -80,7 +81,7 @@ index fba2a4009462..5b817a994821 100644
          .arg(
              Arg::with_name("rpc_bigtable_timeout")
                  .long("rpc-bigtable-timeout")
-@@ -2405,6 +2414,7 @@ pub fn main() {
+@@ -2406,6 +2416,7 @@ pub fn main() {
                  u64
              ),
              rpc_threads: value_t_or_exit!(matches, "rpc_threads", usize),
@@ -89,5 +90,5 @@ index fba2a4009462..5b817a994821 100644
                  .ok()
                  .map(Duration::from_secs),
 -- 
-2.33.0
+2.33.1
 

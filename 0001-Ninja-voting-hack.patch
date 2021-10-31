@@ -1,0 +1,108 @@
+From 31a192de4421ab8078431b22df9b569c948978c3 Mon Sep 17 00:00:00 2001
+From: Ivan Mironov <mironov.ivan@gmail.com>
+Date: Sun, 31 Oct 2021 16:29:48 +0500
+Subject: [PATCH] Ninja voting hack
+
+---
+ core/src/voting_service.rs | 36 ++++++++++++++++++++++++++++++++----
+ gossip/src/cluster_info.rs |  9 ++++++---
+ poh/src/poh_recorder.rs    |  4 ++++
+ 3 files changed, 42 insertions(+), 7 deletions(-)
+
+diff --git a/core/src/voting_service.rs b/core/src/voting_service.rs
+index c7d01c99f2fd..70a776ee26b2 100644
+--- a/core/src/voting_service.rs
++++ b/core/src/voting_service.rs
+@@ -1,7 +1,10 @@
++use crate::banking_stage::FORWARD_TRANSACTIONS_TO_LEADER_AT_SLOT_OFFSET;
+ use solana_gossip::cluster_info::ClusterInfo;
++use solana_gossip::contact_info::ContactInfo;
+ use solana_poh::poh_recorder::PohRecorder;
+ use solana_runtime::bank_forks::BankForks;
+ use solana_sdk::{clock::Slot, transaction::Transaction};
++use std::collections::HashSet;
+ use std::{
+     sync::{mpsc::Receiver, Arc, Mutex, RwLock},
+     thread::{self, Builder, JoinHandle},
+@@ -60,12 +63,37 @@ impl VotingService {
+         vote_op: VoteOp,
+         send_to_tpu_vote_port: bool,
+     ) {
+-        let target_address = if send_to_tpu_vote_port {
+-            crate::banking_stage::next_leader_tpu_vote(cluster_info, poh_recorder)
++        let address_selector = if send_to_tpu_vote_port {
++            |leader: &ContactInfo| leader.tpu_vote
+         } else {
+-            crate::banking_stage::next_leader_tpu(cluster_info, poh_recorder)
++            |leader: &ContactInfo| leader.tpu
+         };
+-        let _ = cluster_info.send_vote(vote_op.tx(), target_address);
++        let target_addresses = {
++            let mut target_addresses = HashSet::with_capacity(5);
++            let poh_recorder = poh_recorder.lock().unwrap();
++            let current_slot =
++                poh_recorder.tick_height().saturating_sub(1) / poh_recorder.ticks_per_slot();
++            for leader_off in [
++                -6,
++                -2,
++                FORWARD_TRANSACTIONS_TO_LEADER_AT_SLOT_OFFSET as i8,
++                5,
++                9,
++            ] {
++                let slot = if leader_off >= 0 {
++                    current_slot.saturating_add(leader_off as u64)
++                } else {
++                    current_slot.saturating_sub(leader_off.abs() as u64)
++                };
++                let _ = target_addresses.insert(poh_recorder.leader_at_slot(slot).and_then(
++                    |leader_pubkey| {
++                        cluster_info.lookup_contact_info(&leader_pubkey, address_selector)
++                    },
++                ));
++            }
++            target_addresses
++        };
++        let _ = cluster_info.send_vote(vote_op.tx(), target_addresses);
+ 
+         match vote_op {
+             VoteOp::PushVote { tx, tower_slots } => {
+diff --git a/gossip/src/cluster_info.rs b/gossip/src/cluster_info.rs
+index ed8adef6e41c..4e1ca8058b11 100644
+--- a/gossip/src/cluster_info.rs
++++ b/gossip/src/cluster_info.rs
+@@ -1062,11 +1062,14 @@ impl ClusterInfo {
+     pub fn send_vote(
+         &self,
+         vote: &Transaction,
+-        tpu: Option<SocketAddr>,
++        tpus: HashSet<Option<SocketAddr>>,
+     ) -> Result<(), GossipError> {
+-        let tpu = tpu.unwrap_or_else(|| self.my_contact_info().tpu);
+         let buf = serialize(vote)?;
+-        self.socket.send_to(&buf, &tpu)?;
++        for tpu in tpus {
++            let tpu = tpu.unwrap_or_else(|| self.my_contact_info().tpu);
++            self.socket.send_to(&buf, tpu)?;
++            self.socket.send_to(&buf, tpu)?;
++        }
+         Ok(())
+     }
+ 
+diff --git a/poh/src/poh_recorder.rs b/poh/src/poh_recorder.rs
+index 2a17c68d418d..630eeb5d5730 100644
+--- a/poh/src/poh_recorder.rs
++++ b/poh/src/poh_recorder.rs
+@@ -233,6 +233,10 @@ impl PohRecorder {
+             .slot_leader_at(current_slot + slots, None)
+     }
+ 
++    pub fn leader_at_slot(&self, slot: u64) -> Option<Pubkey> {
++        self.leader_schedule_cache.slot_leader_at(slot, None)
++    }
++
+     pub fn next_slot_leader(&self) -> Option<Pubkey> {
+         self.leader_after_n_slots(1)
+     }
+-- 
+2.33.1
+
