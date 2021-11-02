@@ -1,89 +1,137 @@
-From 31a192de4421ab8078431b22df9b569c948978c3 Mon Sep 17 00:00:00 2001
+From 98bb883dfd939d6345f7854a551fe0896ba48b91 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Sun, 31 Oct 2021 16:29:48 +0500
 Subject: [PATCH] Ninja voting hack
 
 ---
- core/src/voting_service.rs | 36 ++++++++++++++++++++++++++++++++----
- gossip/src/cluster_info.rs |  9 ++++++---
- poh/src/poh_recorder.rs    |  4 ++++
- 3 files changed, 42 insertions(+), 7 deletions(-)
+ core/src/voting_service.rs | 74 ++++++++++++++++++++++++++++++++++----
+ gossip/src/cluster_info.rs | 14 ++++++--
+ poh/src/poh_recorder.rs    |  4 +++
+ 3 files changed, 83 insertions(+), 9 deletions(-)
 
 diff --git a/core/src/voting_service.rs b/core/src/voting_service.rs
-index c7d01c99f2fd..70a776ee26b2 100644
+index c7d01c99f2fd..c1e046c0834b 100644
 --- a/core/src/voting_service.rs
 +++ b/core/src/voting_service.rs
-@@ -1,7 +1,10 @@
+@@ -1,7 +1,11 @@
 +use crate::banking_stage::FORWARD_TRANSACTIONS_TO_LEADER_AT_SLOT_OFFSET;
  use solana_gossip::cluster_info::ClusterInfo;
 +use solana_gossip::contact_info::ContactInfo;
  use solana_poh::poh_recorder::PohRecorder;
  use solana_runtime::bank_forks::BankForks;
  use solana_sdk::{clock::Slot, transaction::Transaction};
-+use std::collections::HashSet;
++use std::net::IpAddr;
++use std::net::SocketAddr;
  use std::{
      sync::{mpsc::Receiver, Arc, Mutex, RwLock},
      thread::{self, Builder, JoinHandle},
-@@ -60,12 +63,37 @@ impl VotingService {
+@@ -60,12 +64,10 @@ impl VotingService {
          vote_op: VoteOp,
          send_to_tpu_vote_port: bool,
      ) {
 -        let target_address = if send_to_tpu_vote_port {
 -            crate::banking_stage::next_leader_tpu_vote(cluster_info, poh_recorder)
-+        let address_selector = if send_to_tpu_vote_port {
-+            |leader: &ContactInfo| leader.tpu_vote
-         } else {
+-        } else {
 -            crate::banking_stage::next_leader_tpu(cluster_info, poh_recorder)
-+            |leader: &ContactInfo| leader.tpu
-         };
+-        };
 -        let _ = cluster_info.send_vote(vote_op.tx(), target_address);
-+        let target_addresses = {
-+            let mut target_addresses = HashSet::with_capacity(5);
-+            let poh_recorder = poh_recorder.lock().unwrap();
-+            let current_slot =
-+                poh_recorder.tick_height().saturating_sub(1) / poh_recorder.ticks_per_slot();
-+            for leader_off in [
-+                -6,
-+                -2,
-+                FORWARD_TRANSACTIONS_TO_LEADER_AT_SLOT_OFFSET as i8,
-+                5,
-+                9,
-+            ] {
-+                let slot = if leader_off >= 0 {
-+                    current_slot.saturating_add(leader_off as u64)
-+                } else {
-+                    current_slot.saturating_sub(leader_off.abs() as u64)
-+                };
-+                let _ = target_addresses.insert(poh_recorder.leader_at_slot(slot).and_then(
-+                    |leader_pubkey| {
-+                        cluster_info.lookup_contact_info(&leader_pubkey, address_selector)
-+                    },
-+                ));
-+            }
-+            target_addresses
-+        };
-+        let _ = cluster_info.send_vote(vote_op.tx(), target_addresses);
++        let _ = cluster_info.send_vote(
++            vote_op.tx(),
++            Self::get_target_addresses(cluster_info, poh_recorder, send_to_tpu_vote_port),
++        );
  
          match vote_op {
              VoteOp::PushVote { tx, tower_slots } => {
+@@ -80,6 +82,66 @@ impl VotingService {
+         }
+     }
+ 
++    fn get_target_addresses(
++        cluster_info: &ClusterInfo,
++        poh_recorder: &Mutex<PohRecorder>,
++        send_to_tpu_vote_port: bool,
++    ) -> Vec<Option<SocketAddr>> {
++        let current_slot = {
++            let poh_recorder = poh_recorder.lock().unwrap();
++            poh_recorder.tick_height().saturating_sub(1) / poh_recorder.ticks_per_slot()
++        };
++
++        let address_selector = if send_to_tpu_vote_port {
++            |leader: &ContactInfo| leader.tpu_vote
++        } else {
++            |leader: &ContactInfo| leader.tpu
++        };
++
++        let mut target_addresses = Vec::with_capacity(5);
++        for leader_off in [
++            -6,
++            -2,
++            FORWARD_TRANSACTIONS_TO_LEADER_AT_SLOT_OFFSET as i8,
++            5,
++            9,
++        ] {
++            let slot = if leader_off >= 0 {
++                current_slot.saturating_add(leader_off as u64)
++            } else {
++                current_slot.saturating_sub(leader_off.abs() as u64)
++            };
++
++            let leader_pubkey = {
++                let poh_recorder = poh_recorder.lock().unwrap();
++                poh_recorder.leader_at_slot(slot)
++            };
++
++            let target_address = leader_pubkey.and_then(|leader_pubkey| {
++                cluster_info.lookup_contact_info(&leader_pubkey, address_selector)
++            });
++
++            // None target_address means that validator is not in Gossip at all.
++            let target_address = target_address.and_then(|target_address| {
++                if target_address == SocketAddr::new(IpAddr::from([0, 0, 0, 0]), 0) {
++                    // Some(0.0.0.0:0) target_address means that validator is in Gossip but somehow
++                    // does not have registered tpu/tpu_vote addresses. Such validators are usually
++                    // delinquent.
++                    None
++                } else {
++                    Some(target_address)
++                }
++            });
++
++            if target_addresses.last() != Some(&target_address) {
++                target_addresses.push(target_address);
++            }
++        }
++
++        info!("voting target addresses: {:?}", target_addresses);
++        target_addresses
++    }
++
+     pub fn join(self) -> thread::Result<()> {
+         self.thread_hdl.join()
+     }
 diff --git a/gossip/src/cluster_info.rs b/gossip/src/cluster_info.rs
-index ed8adef6e41c..4e1ca8058b11 100644
+index ed8adef6e41c..dd14eb121f8f 100644
 --- a/gossip/src/cluster_info.rs
 +++ b/gossip/src/cluster_info.rs
-@@ -1062,11 +1062,14 @@ impl ClusterInfo {
+@@ -1062,11 +1062,19 @@ impl ClusterInfo {
      pub fn send_vote(
          &self,
          vote: &Transaction,
 -        tpu: Option<SocketAddr>,
-+        tpus: HashSet<Option<SocketAddr>>,
++        tpus: Vec<Option<SocketAddr>>,
      ) -> Result<(), GossipError> {
 -        let tpu = tpu.unwrap_or_else(|| self.my_contact_info().tpu);
++        if tpus.is_empty() {
++            return Ok(());
++        }
++
          let buf = serialize(vote)?;
 -        self.socket.send_to(&buf, &tpu)?;
-+        for tpu in tpus {
-+            let tpu = tpu.unwrap_or_else(|| self.my_contact_info().tpu);
-+            self.socket.send_to(&buf, tpu)?;
-+            self.socket.send_to(&buf, tpu)?;
++        for _ in 0..2 {
++            for tpu in &tpus {
++                let tpu = tpu.unwrap_or_else(|| self.my_contact_info().tpu);
++                self.socket.send_to(&buf, tpu)?;
++            }
 +        }
          Ok(())
      }
