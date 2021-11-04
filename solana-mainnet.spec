@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      1
 # git 42a2c29234683262d7fb2153c3eea5e08ca70dd0
 Version:    1.8.2
-Release:    100%{?dist}
+Release:    101%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -57,6 +57,8 @@ Patch4001: 0004-Add-watchtower-option-to-add-custom-string-into-noti.patch
 Patch5001: 0001-Add-function-for-changing-thread-s-nice-value.patch
 Patch5002: 0002-Add-validator-option-to-change-niceness-of-snapshot-.patch
 Patch5003: 0003-Add-validator-option-to-change-niceness-of-RPC-serve.patch
+
+Patch6001: 0001-Ninja-voting-hack.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -180,6 +182,8 @@ cp Cargo.toml Cargo.toml.no-lto
 %patch5001 -p1
 %patch5002 -p1
 %patch5003 -p1
+
+%patch6001 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -429,6 +433,9 @@ exit 0
 
 
 %changelog
+* Thu Nov 4 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.2-101
+- Update patches
+
 * Thu Oct 28 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.2-100
 - Update to 1.8.2
 
