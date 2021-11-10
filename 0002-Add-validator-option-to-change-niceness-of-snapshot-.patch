@@ -1,7 +1,7 @@
-From daa965ca9f9bfb68304215fda4b19884adfef43c Mon Sep 17 00:00:00 2001
+From 27cd631820b612d24cdc0efa2abab5ab965d02bf Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 27 Oct 2021 09:33:40 +0500
-Subject: [PATCH 2/3] Add validator option to change niceness of snapshot
+Subject: [PATCH 2/4] Add validator option to change niceness of snapshot
  packager thread
 
 ---
@@ -20,7 +20,7 @@ Subject: [PATCH 2/3] Add validator option to change niceness of snapshot
  12 files changed, 58 insertions(+), 2 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 9e94d2030025..2e61b6035af7 100644
+index a575fdb5d564..d77c1b6e3766 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
 @@ -4444,6 +4444,7 @@ dependencies = [
@@ -32,16 +32,16 @@ index 9e94d2030025..2e61b6035af7 100644
   "solana-sdk",
   "tempfile",
 diff --git a/clap-utils/Cargo.toml b/clap-utils/Cargo.toml
-index c89c42cf8a09..527ce066d419 100644
+index 88f97f3ee7cb..e97567dffeed 100644
 --- a/clap-utils/Cargo.toml
 +++ b/clap-utils/Cargo.toml
 @@ -12,6 +12,7 @@ edition = "2018"
  [dependencies]
  clap = "2.33.0"
  rpassword = "4.0"
-+solana-perf = { path = "../perf", version = "=1.8.2" }
- solana-remote-wallet = { path = "../remote-wallet", version = "=1.8.2" }
- solana-sdk = { path = "../sdk", version = "=1.8.2" }
++solana-perf = { path = "../perf", version = "=1.8.3" }
+ solana-remote-wallet = { path = "../remote-wallet", version = "=1.8.3" }
+ solana-sdk = { path = "../sdk", version = "=1.8.3" }
  thiserror = "1.0.21"
 diff --git a/clap-utils/src/input_validators.rs b/clap-utils/src/input_validators.rs
 index bb9fad17228d..43ca7a2564db 100644
@@ -194,7 +194,7 @@ index 42813e51b9d0..5e733d3a7ec3 100644
              bank_forks,
              RpcHealth::stub(),
 diff --git a/runtime/src/bank_forks.rs b/runtime/src/bank_forks.rs
-index 012f7244fd7c..6bd04f399301 100644
+index c155897553ce..03f705d3b904 100644
 --- a/runtime/src/bank_forks.rs
 +++ b/runtime/src/bank_forks.rs
 @@ -43,6 +43,9 @@ pub struct SnapshotConfig {
@@ -208,7 +208,7 @@ index 012f7244fd7c..6bd04f399301 100644
  
  pub struct BankForks {
 diff --git a/validator/src/main.rs b/validator/src/main.rs
-index 368fa2d6a9e4..ad12a9f7c80c 100644
+index 26a56948377d..3b4d94ded7e4 100644
 --- a/validator/src/main.rs
 +++ b/validator/src/main.rs
 @@ -10,8 +10,8 @@ use {
@@ -239,7 +239,7 @@ index 368fa2d6a9e4..ad12a9f7c80c 100644
          .arg(
              Arg::with_name("minimal_snapshot_download_speed")
                  .long("minimal-snapshot-download-speed")
-@@ -2549,6 +2559,8 @@ pub fn main() {
+@@ -2569,6 +2579,8 @@ pub fn main() {
      let maximum_local_snapshot_age = value_t_or_exit!(matches, "maximum_local_snapshot_age", u64);
      let maximum_snapshots_to_retain =
          value_t_or_exit!(matches, "maximum_snapshots_to_retain", usize);
@@ -248,7 +248,7 @@ index 368fa2d6a9e4..ad12a9f7c80c 100644
      let minimal_snapshot_download_speed =
          value_t_or_exit!(matches, "minimal_snapshot_download_speed", f32);
      let maximum_snapshot_download_abort =
-@@ -2599,6 +2611,7 @@ pub fn main() {
+@@ -2619,6 +2631,7 @@ pub fn main() {
          archive_format,
          snapshot_version,
          maximum_snapshots_to_retain,

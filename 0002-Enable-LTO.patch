@@ -1,7 +1,7 @@
-From 975ecfd34aa37533a8cc7302fd0699258ec06f75 Mon Sep 17 00:00:00 2001
+From 3c3d9bb1c54900bf701c6d9e365743f493f8ac58 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 7 Oct 2021 07:57:32 +0500
-Subject: [PATCH 2/4] Enable LTO
+Subject: [PATCH 2/3] Enable LTO
 
 ---
  Cargo.toml | 2 ++
@@ -18,5 +18,5 @@ index 31c5845ec11c..09bc4e990441 100644
 +lto = "fat"
 +codegen-units = 1
 -- 
-2.33.0
+2.33.1
 

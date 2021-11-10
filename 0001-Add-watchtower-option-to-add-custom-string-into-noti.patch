@@ -1,8 +1,7 @@
-From 9b8e9d9a41f17e48437f61c340d7e2f693f03556 Mon Sep 17 00:00:00 2001
+From af0f1dc71cc18160db0034b3aea04aff93eaff33 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Tue, 26 Oct 2021 12:03:04 +0500
-Subject: [PATCH 4/4] Add watchtower option to add custom string into
- notifications
+Subject: [PATCH] Add watchtower option to add custom string into notifications
 
 ---
  watchtower/src/main.rs | 20 +++++++++++++++++---
@@ -75,5 +74,5 @@ index 3dd06dd8aaa5..a8a7424e9c31 100644
              last_notification_msg = "".into();
              last_success = Instant::now();
 -- 
-2.33.0
+2.33.1
 
