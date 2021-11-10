@@ -1,7 +1,7 @@
-From 2a4aafd34f1c50b20b323a948a27089d5d26bc71 Mon Sep 17 00:00:00 2001
+From 22519b32dfe0e085a2ec342d9b331459902d9742 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 27 Oct 2021 08:13:19 +0500
-Subject: [PATCH 3/3] Add validator option to change niceness of RPC server
+Subject: [PATCH 3/4] Add validator option to change niceness of RPC server
  threads
 
 Fixes https://github.com/solana-labs/solana/issues/14556
@@ -61,7 +61,7 @@ index 5e733d3a7ec3..00eabc78f6cf 100644
  
                  io.extend_with(rpc_minimal::MinimalImpl.to_delegate());
 diff --git a/validator/src/main.rs b/validator/src/main.rs
-index ad12a9f7c80c..a11b24302c46 100644
+index 3b4d94ded7e4..25fb7c6d6309 100644
 --- a/validator/src/main.rs
 +++ b/validator/src/main.rs
 @@ -1631,6 +1631,16 @@ pub fn main() {
@@ -81,7 +81,7 @@ index ad12a9f7c80c..a11b24302c46 100644
          .arg(
              Arg::with_name("rpc_bigtable_timeout")
                  .long("rpc-bigtable-timeout")
-@@ -2406,6 +2416,7 @@ pub fn main() {
+@@ -2424,6 +2434,7 @@ pub fn main() {
                  u64
              ),
              rpc_threads: value_t_or_exit!(matches, "rpc_threads", usize),

@@ -16,9 +16,9 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 42a2c29234683262d7fb2153c3eea5e08ca70dd0
-Version:    1.8.2
-Release:    4%{?dist}
+# git 784c745efa7a32d39222ef3dc0034b88190d194a
+Version:    1.8.3
+Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -52,11 +52,12 @@ Patch3001: 0001-Fix-libc-error-detection-182.patch
 Patch3002: 0002-Use-mmap-instead-of-memalign-184.patch
 Patch3003: fix-rbpf-crate-checksums.patch
 
-Patch4001: 0004-Add-watchtower-option-to-add-custom-string-into-noti.patch
+Patch4001: 0001-Add-watchtower-option-to-add-custom-string-into-noti.patch
 
 Patch5001: 0001-Add-function-for-changing-thread-s-nice-value.patch
 Patch5002: 0002-Add-validator-option-to-change-niceness-of-snapshot-.patch
 Patch5003: 0003-Add-validator-option-to-change-niceness-of-RPC-serve.patch
+Patch5004: 0004-Run-.-scripts-cargo-for-all-lock-files.sh-tree.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -180,6 +181,7 @@ cp Cargo.toml Cargo.toml.no-lto
 %patch5001 -p1
 %patch5002 -p1
 %patch5003 -p1
+%patch5004 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -429,6 +431,9 @@ exit 0
 
 
 %changelog
+* Wed Nov 10 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.3-1
+- Update to 1.8.3
+
 * Wed Nov 10 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.2-4
 - Update patches
 

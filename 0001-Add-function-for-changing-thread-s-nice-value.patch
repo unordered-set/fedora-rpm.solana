@@ -1,7 +1,7 @@
-From 66c3d094eb6f4bae0fb6fa4beb71425950e56c94 Mon Sep 17 00:00:00 2001
+From 81cc7e4df31b3ee4c716b6e9a0faacbc25cf4561 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Wed, 27 Oct 2021 06:07:37 +0500
-Subject: [PATCH 1/3] Add function for changing thread's nice value
+Subject: [PATCH 1/4] Add function for changing thread's nice value
 
 Linux only.
 ---
@@ -13,7 +13,7 @@ Linux only.
  create mode 100644 perf/src/thread.rs
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 4638ff2b71d3..9e94d2030025 100644
+index 1f11d941e33f..a575fdb5d564 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
 @@ -561,6 +561,17 @@ dependencies = [
@@ -63,7 +63,7 @@ index 4638ff2b71d3..9e94d2030025 100644
  name = "failure"
  version = "0.1.8"
 @@ -5180,12 +5212,15 @@ name = "solana-perf"
- version = "1.8.2"
+ version = "1.8.3"
  dependencies = [
   "bincode",
 + "caps",
@@ -79,12 +79,12 @@ index 4638ff2b71d3..9e94d2030025 100644
   "rayon",
   "serde",
 diff --git a/perf/Cargo.toml b/perf/Cargo.toml
-index 9314c9e5e6bd..3dcd301dd96b 100644
+index e88891963d59..7a95b58f7483 100644
 --- a/perf/Cargo.toml
 +++ b/perf/Cargo.toml
-@@ -25,6 +25,11 @@ solana-sdk = { path = "../sdk", version = "=1.8.2" }
- solana-rayon-threadlimit = { path = "../rayon-threadlimit", version = "=1.8.2" }
- solana-vote-program = { path = "../programs/vote", version = "=1.8.2" }
+@@ -25,6 +25,11 @@ solana-sdk = { path = "../sdk", version = "=1.8.3" }
+ solana-rayon-threadlimit = { path = "../rayon-threadlimit", version = "=1.8.3" }
+ solana-vote-program = { path = "../programs/vote", version = "=1.8.3" }
  
 +[target."cfg(target_os = \"linux\")".dependencies]
 +caps = "0.5.3"
