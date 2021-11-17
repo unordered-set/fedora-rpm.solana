@@ -1,7 +1,7 @@
-From 3c3d9bb1c54900bf701c6d9e365743f493f8ac58 Mon Sep 17 00:00:00 2001
+From 6a04ad52276b78ce62004f099ffc53abd04df22c Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 7 Oct 2021 07:57:32 +0500
-Subject: [PATCH 2/3] Enable LTO
+Subject: [PATCH 2/4] Enable LTO
 
 ---
  Cargo.toml | 2 ++
