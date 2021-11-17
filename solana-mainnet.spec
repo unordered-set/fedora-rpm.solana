@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git 784c745efa7a32d39222ef3dc0034b88190d194a
-Version:    1.8.3
+# git 0e6b476cbf34cae3d3e0768712627c1f7b88e39b
+Version:    1.8.4
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -53,11 +53,6 @@ Patch3002: 0002-Use-mmap-instead-of-memalign-184.patch
 Patch3003: fix-rbpf-crate-checksums.patch
 
 Patch4001: 0001-Add-watchtower-option-to-add-custom-string-into-noti.patch
-
-Patch5001: 0001-Add-function-for-changing-thread-s-nice-value.patch
-Patch5002: 0002-Add-validator-option-to-change-niceness-of-snapshot-.patch
-Patch5003: 0003-Add-validator-option-to-change-niceness-of-RPC-serve.patch
-Patch5004: 0004-Run-.-scripts-cargo-for-all-lock-files.sh-tree.patch
 
 ExclusiveArch:  %{rust_arches}
 
@@ -177,11 +172,6 @@ cp Cargo.toml Cargo.toml.no-lto
 %patch3003 -p1
 
 %patch4001 -p1
-
-%patch5001 -p1
-%patch5002 -p1
-%patch5003 -p1
-%patch5004 -p1
 
 # Remove bundled C/C++ source code.
 rm -r vendor/bzip2-sys/bzip2-*
@@ -431,19 +421,22 @@ exit 0
 
 
 %changelog
-* Wed Nov 10 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.3-100
+* Wed Nov 17 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.4-100
+- Update to 1.8.4
+
+* Wed Nov 10 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.3-100
 - Update to 1.8.3
 
-* Wed Nov 10 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.2-101
+* Wed Nov 10 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.2-101
 - Update patches
 
-* Thu Nov 4 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.2-101
+* Thu Nov 4 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.2-101
 - Update patches
 
-* Thu Oct 28 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.2-100
+* Thu Oct 28 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.2-100
 - Update to 1.8.2
 
-* Wed Oct 27 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.1-100
+* Wed Oct 27 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.1-100
 - Update to 1.8.1
 
 * Fri Oct 8 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.7.15-100
