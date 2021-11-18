@@ -1,4 +1,4 @@
-From af0f1dc71cc18160db0034b3aea04aff93eaff33 Mon Sep 17 00:00:00 2001
+From d127738e2d67749c3750963f9b922e2cd18b47fe Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Tue, 26 Oct 2021 12:03:04 +0500
 Subject: [PATCH] Add watchtower option to add custom string into notifications
