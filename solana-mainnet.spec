@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git e5aa5efbac0cb20a5b1418fe5158bafd17bb5ba4
-Version:    1.8.6
+# git 6777ca244f9463975b53bbf188c8302b4763fe7d
+Version:    1.8.7
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -47,10 +47,6 @@ Patch1001: 0001-Enable-debug-info-in-release-profile.patch
 Patch1002: 0002-Enable-LTO.patch
 
 Patch2001: 0003-Replace-bundled-C-C-libraries-with-system-provided.patch
-
-Patch3001: 0001-Fix-libc-error-detection-182.patch
-Patch3002: 0002-Use-mmap-instead-of-memalign-184.patch
-Patch3003: fix-rbpf-crate-checksums.patch
 
 Patch4001: 0001-Add-watchtower-option-to-add-custom-string-into-noti.patch
 
@@ -166,10 +162,6 @@ cp Cargo.toml Cargo.toml.no-lto
 %patch1002 -p1
 
 %patch2001 -p1
-
-%patch3001 -p1
-%patch3002 -p1
-%patch3003 -p1
 
 %patch4001 -p1
 
@@ -421,6 +413,9 @@ exit 0
 
 
 %changelog
+* Sat Dec 4 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.7-100
+- Update to 1.8.7
+
 * Wed Dec 1 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.6-100
 - Update to 1.8.6
 
