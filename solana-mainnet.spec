@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      1
 # git 6777ca244f9463975b53bbf188c8302b4763fe7d
 Version:    1.8.7
-Release:    100%{?dist}
+Release:    101%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -40,6 +40,7 @@ Source6:    solana-sys-tuner.service
 Source7:    solana-watchtower.service
 Source8:    solana-watchtower
 Source9:    solana-validator.logrotate
+Source10:   solana-validator.wrapper
 
 Source100:  filter-cargo-checksum
 
@@ -238,12 +239,17 @@ sed 's,__SUFFIX__,%{solana_suffix},g' \
 sed 's,__SUFFIX__,%{solana_suffix},g' \
         <%{SOURCE9} \
         >solana-validator.logrotate
+sed 's,__SUFFIX__,%{solana_suffix},g' \
+        <%{SOURCE10} \
+        >solana-validator.wrapper
+chmod a+x solana-validator.wrapper
 
 ./target/release/solana completion --shell bash >solana.bash-completion
 
 
 %install
 mkdir -p %{buildroot}/opt/solana/%{solana_suffix}/bin/deps
+mkdir -p %{buildroot}/opt/solana/%{solana_suffix}/libexec
 mkdir -p %{buildroot}/%{_unitdir}
 mkdir -p %{buildroot}%{solana_home}
 mkdir -p %{buildroot}%{solana_log}
@@ -265,6 +271,8 @@ mv solana-watchtower \
         %{buildroot}%{_sysconfdir}/sysconfig/solana-watchtower-%{solana_suffix}
 mv solana-validator.logrotate \
         %{buildroot}%{_sysconfdir}/logrotate.d/solana-validator-%{solana_suffix}
+mv solana-validator.wrapper \
+        %{buildroot}/opt/solana/%{solana_suffix}/bin/solana-validator
 
 # Use binaries optimized for newer CPUs for running validator and local benchmarks.
 mv release.newer-cpus/*.so target/release/
@@ -287,6 +295,8 @@ rm target/release/libsolana_frozen_abi_macro.so target/release/libsolana_sdk_mac
 
 mv target/release/*.so \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/deps/
+mv target/release/solana-validator \
+        %{buildroot}/opt/solana/%{solana_suffix}/libexec/
 mv target/release/* \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/
 
@@ -338,11 +348,13 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
+%dir /opt/solana/%{solana_suffix}/libexec
 /opt/solana/%{solana_suffix}/bin/solana-faucet
 /opt/solana/%{solana_suffix}/bin/solana-ip-address-server
 /opt/solana/%{solana_suffix}/bin/solana-sys-tuner
 /opt/solana/%{solana_suffix}/bin/solana-validator
 /opt/solana/%{solana_suffix}/bin/solana-watchtower
+/opt/solana/%{solana_suffix}/libexec/solana-validator
 
 %{_unitdir}/solana-validator-%{solana_suffix}.service
 %{_unitdir}/solana-sys-tuner-%{solana_suffix}.service
@@ -413,6 +425,9 @@ exit 0
 
 
 %changelog
+* Sun Dec 5 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.7-101
+- Add wrapper to run validator with jemalloc, prevents crash
+
 * Sat Dec 4 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.7-100
 - Update to 1.8.7
 

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+export LD_PRELOAD="/usr/lib64/libjemalloc.so.2"
+exec /opt/solana/__SUFFIX__/libexec/solana-validator "${@}"
