@@ -16,9 +16,9 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git 6777ca244f9463975b53bbf188c8302b4763fe7d
-Version:    1.8.7
-Release:    101%{?dist}
+# git 32f507dc513f8385ed7ee5c8f3fdef7d7d79adaf
+Version:    1.8.8
+Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -425,6 +425,9 @@ exit 0
 
 
 %changelog
+* Thu Dec 9 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.8-100
+- Update to 1.8.8
+
 * Sun Dec 5 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.7-101
 - Add wrapper to run validator with jemalloc, prevents crash
 
