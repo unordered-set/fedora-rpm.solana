@@ -1,4 +1,4 @@
-From 879aebb90f3825bd8a9b9878e894935ec873aadf Mon Sep 17 00:00:00 2001
+From a7eccb35c4e87cbbf6106a71203b8cba45160b68 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 18 Feb 2021 17:17:32 +0500
 Subject: [PATCH 3/3] Replace bundled C/C++ libraries with system provided
@@ -12,7 +12,7 @@ Subject: [PATCH 3/3] Replace bundled C/C++ libraries with system provided
  5 files changed, 11 insertions(+), 28 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 1768ab9bdb3f..ea62060b95e2 100644
+index 0fd8cba11ce6..9c505c60f8b1 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
 @@ -2711,15 +2711,6 @@ version = "0.1.2"
@@ -79,11 +79,11 @@ index 1768ab9bdb3f..ea62060b95e2 100644
 + "pkg-config",
  ]
 diff --git a/account-decoder/Cargo.toml b/account-decoder/Cargo.toml
-index 594cd7b926dd..3d82136dabcf 100644
+index 8d05ad779a6a..f69e9fab66db 100644
 --- a/account-decoder/Cargo.toml
 +++ b/account-decoder/Cargo.toml
-@@ -24,7 +24,7 @@ solana-sdk = { path = "../sdk", version = "=1.8.8" }
- solana-vote-program = { path = "../programs/vote", version = "=1.8.8" }
+@@ -24,7 +24,7 @@ solana-sdk = { path = "../sdk", version = "=1.8.9" }
+ solana-vote-program = { path = "../programs/vote", version = "=1.8.9" }
  spl-token = { version = "=3.2.0", features = ["no-entrypoint"] }
  thiserror = "1.0"
 -zstd = "0.5.1"
@@ -92,7 +92,7 @@ index 594cd7b926dd..3d82136dabcf 100644
  [package.metadata.docs.rs]
  targets = ["x86_64-unknown-linux-gnu"]
 diff --git a/remote-wallet/Cargo.toml b/remote-wallet/Cargo.toml
-index 4b3eebdb1295..365361d527cd 100644
+index 602733b4ae57..04de65c012f3 100644
 --- a/remote-wallet/Cargo.toml
 +++ b/remote-wallet/Cargo.toml
 @@ -25,7 +25,7 @@ thiserror = "1.0"
@@ -105,7 +105,7 @@ index 4b3eebdb1295..365361d527cd 100644
  linux-static-hidraw = ["hidapi/linux-static-hidraw"]
  linux-shared-libusb = ["hidapi/linux-shared-libusb"]
 diff --git a/runtime/Cargo.toml b/runtime/Cargo.toml
-index 43061240d9bc..dfed67c9cd3a 100644
+index bc0b04f28f03..703c0930c34d 100644
 --- a/runtime/Cargo.toml
 +++ b/runtime/Cargo.toml
 @@ -53,7 +53,7 @@ symlink = "0.1.0"
@@ -118,10 +118,10 @@ index 43061240d9bc..dfed67c9cd3a 100644
  [lib]
  crate-type = ["lib"]
 diff --git a/storage-bigtable/Cargo.toml b/storage-bigtable/Cargo.toml
-index effa4cae1ae1..cc0c97b34b17 100644
+index d23d89222944..5e13c13879fd 100644
 --- a/storage-bigtable/Cargo.toml
 +++ b/storage-bigtable/Cargo.toml
-@@ -31,16 +31,8 @@ solana-transaction-status = { path = "../transaction-status", version = "=1.8.8"
+@@ -31,16 +31,8 @@ solana-transaction-status = { path = "../transaction-status", version = "=1.8.9"
  thiserror = "1.0"
  futures = "0.3.8"
  tonic = { version = "0.5.0", features = ["tls", "transport"] }
