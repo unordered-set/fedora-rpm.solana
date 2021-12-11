@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 2b2536ac423cc1d6ddda878fbcf3f50a9685c69a
-Version:    1.8.9
+# git 7782d34bbfa35bae58f81037cdf6cc7f784463d3
+Version:    1.9.0
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -176,12 +176,14 @@ rm -r vendor/tikv-jemalloc-sys/jemalloc
 rm -r vendor/librocksdb-sys/bzip2
 rm -r vendor/librocksdb-sys/lz4
 rm -r vendor/librocksdb-sys/rocksdb
+rm -r vendor/librocksdb-sys/snappy
 rm -r vendor/librocksdb-sys/zlib
 rm -r vendor/librocksdb-sys/zstd
 %{python} %{SOURCE100} vendor/librocksdb-sys \
         '^bzip2/.*' \
         '^lz4/.*' \
         '^rocksdb/.*' \
+        '^snappy/.*' \
         '^zlib/.*' \
         '^zstd/.*'
 rm -r vendor/zstd-sys/zstd
@@ -207,8 +209,9 @@ export RUSTFLAGS='-C target-cpu=%{validator_target_cpu}'
         --package solana-bench-streamer \
         --package solana-merkle-root-bench \
         --package solana-poh-bench \
-        --package solana-exchange-program \
-        --package solana-accountsdb-plugin-postgres
+        --package solana-accountsdb-plugin-postgres \
+        --package solana-sdk \
+        --package solana-program:%{version}
 
 mv target/release ./release.newer-cpus
 %{__cargo} clean
@@ -325,7 +328,6 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
-/opt/solana/%{solana_suffix}/bin/solana-csv-to-validator-infos
 /opt/solana/%{solana_suffix}/bin/solana-keygen
 /opt/solana/%{solana_suffix}/bin/solana-log-analyzer
 /opt/solana/%{solana_suffix}/bin/solana-ledger-tool
@@ -341,7 +343,8 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana/%{solana_suffix}/bin
 %dir /opt/solana/%{solana_suffix}/bin/deps
 /opt/solana/%{solana_suffix}/bin/deps/libsolana_accountsdb_plugin_postgres.so
-/opt/solana/%{solana_suffix}/bin/deps/libsolana_exchange_program.so
+/opt/solana/%{solana_suffix}/bin/deps/libsolana_program.so
+/opt/solana/%{solana_suffix}/bin/deps/libsolana_sdk.so
 
 
 %files daemons
@@ -351,6 +354,7 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana/%{solana_suffix}/libexec
 /opt/solana/%{solana_suffix}/bin/solana-faucet
 /opt/solana/%{solana_suffix}/bin/solana-ip-address-server
+/opt/solana/%{solana_suffix}/bin/solana-replica-node
 /opt/solana/%{solana_suffix}/bin/solana-sys-tuner
 /opt/solana/%{solana_suffix}/bin/solana-validator
 /opt/solana/%{solana_suffix}/bin/solana-watchtower
@@ -379,6 +383,7 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana/%{solana_suffix}/bin
 /opt/solana/%{solana_suffix}/bin/cargo-build-bpf
 /opt/solana/%{solana_suffix}/bin/cargo-test-bpf
+/opt/solana/%{solana_suffix}/bin/rbpf-cli
 
 
 %files tests
@@ -388,13 +393,13 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 /opt/solana/%{solana_suffix}/bin/solana-accounts-bench
 /opt/solana/%{solana_suffix}/bin/solana-accounts-cluster-bench
 /opt/solana/%{solana_suffix}/bin/solana-banking-bench
-/opt/solana/%{solana_suffix}/bin/solana-bench-exchange
 /opt/solana/%{solana_suffix}/bin/solana-bench-streamer
 /opt/solana/%{solana_suffix}/bin/solana-bench-tps
 /opt/solana/%{solana_suffix}/bin/solana-dos
 /opt/solana/%{solana_suffix}/bin/solana-merkle-root-bench
 /opt/solana/%{solana_suffix}/bin/solana-poh-bench
 /opt/solana/%{solana_suffix}/bin/solana-test-validator
+/opt/solana/%{solana_suffix}/bin/solana-transaction-dos
 
 
 %pre daemons
@@ -425,6 +430,9 @@ exit 0
 
 
 %changelog
+* Sun Dec 12 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.0-1
+- Update to 1.9.0
+
 * Sat Dec 11 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.8.9-1
 - Update to 1.8.9
 
