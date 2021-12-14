@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      1
 # git f97d28caf4e87dc1f84a939d5724f75032326e7b
 Version:    1.8.10
-Release:    100%{?dist}
+Release:    101%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -62,6 +62,7 @@ BuildRequires:  %{python}
 
 BuildRequires:  rust-packaging
 BuildRequires:  rustfmt
+BuildRequires:  rust = 1.55.0
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  gcc
 BuildRequires:  clang
@@ -433,6 +434,9 @@ exit 0
 
 
 %changelog
+* Tue Dec 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.10-101
+- Use rust 1.55.0 for this release (which is 1.8.5 really)
+
 * Tue Dec 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.10-100
 - Update to 1.8.10
 
