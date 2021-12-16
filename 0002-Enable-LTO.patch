@@ -1,4 +1,4 @@
-From e67ee9e44193655a9e98c669e2740b2d145a76c4 Mon Sep 17 00:00:00 2001
+From 2841f958726ecc75f697a0a945eb5e6eba23c523 Mon Sep 17 00:00:00 2001
 From: Ivan Mironov <mironov.ivan@gmail.com>
 Date: Thu, 7 Oct 2021 07:57:32 +0500
 Subject: [PATCH 2/3] Enable LTO
@@ -8,10 +8,10 @@ Subject: [PATCH 2/3] Enable LTO
  1 file changed, 2 insertions(+)
 
 diff --git a/Cargo.toml b/Cargo.toml
-index 573283576760..95e6bcd23eee 100644
+index d3254a15c18e..ac34f8a3a4ed 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -91,3 +91,5 @@ resolver = "2"
+@@ -94,3 +94,5 @@ resolver = "2"
  [profile.release]
  opt-level = 3
  debug = true

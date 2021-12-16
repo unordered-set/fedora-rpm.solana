@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git 7782d34bbfa35bae58f81037cdf6cc7f784463d3
-Version:    1.9.0
+# git b66e2ae3530c02955683da0bc0bf090673f0be16
+Version:    1.9.1
 Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -58,6 +58,7 @@ BuildRequires:  %{python}
 
 BuildRequires:  rust-packaging
 BuildRequires:  rustfmt
+BuildRequires:  rust = 1.57.0
 BuildRequires:  systemd-rpm-macros
 BuildRequires:  gcc
 BuildRequires:  clang
@@ -295,6 +296,7 @@ rm target/release/solana-install target/release/solana-install-init target/relea
 # Excluded. 
 # TODO: Why? Official binary release does not contain these, only libsolana_*_program.so installed.
 rm target/release/libsolana_frozen_abi_macro.so target/release/libsolana_sdk_macro.so
+rm target/release/gen-syscall-list
 
 mv target/release/*.so \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/deps/
@@ -430,6 +432,9 @@ exit 0
 
 
 %changelog
+* Thu Dec 16 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.1-1
+- Update to 1.9.1
+
 * Sun Dec 12 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.0-1
 - Update to 1.9.0
 
