@@ -18,7 +18,7 @@ Name:       solana-%{solana_suffix}
 Epoch:      0
 # git f58b87befe195aa74bb0be3dc90add74014808f0
 Version:    1.9.2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -40,7 +40,7 @@ Source6:    solana-sys-tuner.service
 Source7:    solana-watchtower.service
 Source8:    solana-watchtower
 Source9:    solana-validator.logrotate
-Source10:   solana-validator.wrapper
+Source10:   jemalloc-wrapper
 
 Source100:  filter-cargo-checksum
 
@@ -245,8 +245,8 @@ sed 's,__SUFFIX__,%{solana_suffix},g' \
         >solana-validator.logrotate
 sed 's,__SUFFIX__,%{solana_suffix},g' \
         <%{SOURCE10} \
-        >solana-validator.wrapper
-chmod a+x solana-validator.wrapper
+        >jemalloc-wrapper
+chmod a+x jemalloc-wrapper
 
 ./target/release/solana completion --shell bash >solana.bash-completion
 
@@ -275,7 +275,10 @@ mv solana-watchtower \
         %{buildroot}%{_sysconfdir}/sysconfig/solana-watchtower-%{solana_suffix}
 mv solana-validator.logrotate \
         %{buildroot}%{_sysconfdir}/logrotate.d/solana-validator-%{solana_suffix}
-mv solana-validator.wrapper \
+
+cp jemalloc-wrapper \
+        %{buildroot}/opt/solana/%{solana_suffix}/bin/solana-ledger-tool
+cp jemalloc-wrapper \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/solana-validator
 
 # Use binaries optimized for newer CPUs for running validator and local benchmarks.
@@ -301,6 +304,8 @@ rm target/release/gen-syscall-list
 mv target/release/*.so \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/deps/
 mv target/release/solana-validator \
+        %{buildroot}/opt/solana/%{solana_suffix}/libexec/
+mv target/release/solana-ledger-tool \
         %{buildroot}/opt/solana/%{solana_suffix}/libexec/
 mv target/release/* \
         %{buildroot}/opt/solana/%{solana_suffix}/bin/
@@ -330,6 +335,7 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 %dir /opt/solana
 %dir /opt/solana/%{solana_suffix}
 %dir /opt/solana/%{solana_suffix}/bin
+%dir /opt/solana/%{solana_suffix}/libexec
 /opt/solana/%{solana_suffix}/bin/solana-keygen
 /opt/solana/%{solana_suffix}/bin/solana-log-analyzer
 /opt/solana/%{solana_suffix}/bin/solana-ledger-tool
@@ -337,6 +343,7 @@ mv solana.bash-completion %{buildroot}/opt/solana/%{solana_suffix}/bin/solana.ba
 /opt/solana/%{solana_suffix}/bin/solana-store-tool
 /opt/solana/%{solana_suffix}/bin/solana-upload-perf
 /opt/solana/%{solana_suffix}/bin/solana-net-shaper
+/opt/solana/%{solana_suffix}/libexec/solana-ledger-tool
 
 
 %files deps
@@ -432,6 +439,9 @@ exit 0
 
 
 %changelog
+* Tue Jan 4 2022 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.2-2
+- Add jemalloc wrapper for solana-ledger-tool
+
 * Wed Dec 22 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.2-1
 - Update to 1.9.2
 
