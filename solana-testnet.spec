@@ -16,9 +16,9 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      0
-# git f58b87befe195aa74bb0be3dc90add74014808f0
-Version:    1.9.2
-Release:    2%{?dist}
+# git 8578429c4d2c7fbe4bb8e73c6bf87e00a367fba9
+Version:    1.9.3
+Release:    1%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
 License:    Apache-2.0
@@ -439,6 +439,9 @@ exit 0
 
 
 %changelog
+* Thu Jan 6 2022 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.3-1
+- Update to 1.9.3
+
 * Tue Jan 4 2022 Ivan Mironov <mironov.ivan@gmail.com> - 1.9.2-2
 - Add jemalloc wrapper for solana-ledger-tool
 
