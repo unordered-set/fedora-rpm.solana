@@ -16,8 +16,8 @@
 
 Name:       solana-%{solana_suffix}
 Epoch:      1
-# git 423a4d65461e36fefb371a2f164c20c4e7ed5afa
-Version:    1.8.11
+# git fee86726f2b9f8241051de94ac667eef54e0de1c
+Version:    1.8.12
 Release:    100%{?dist}
 Summary:    Solana blockchain software (%{solana_suffix} version)
 
@@ -177,12 +177,14 @@ rm -r vendor/tikv-jemalloc-sys/jemalloc
 rm -r vendor/librocksdb-sys/bzip2
 rm -r vendor/librocksdb-sys/lz4
 rm -r vendor/librocksdb-sys/rocksdb
+rm -r vendor/librocksdb-sys/snappy
 rm -r vendor/librocksdb-sys/zlib
 rm -r vendor/librocksdb-sys/zstd
 %{python} %{SOURCE100} vendor/librocksdb-sys \
         '^bzip2/.*' \
         '^lz4/.*' \
         '^rocksdb/.*' \
+        '^snappy/.*' \
         '^zlib/.*' \
         '^zstd/.*'
 rm -r vendor/zstd-sys/zstd
@@ -426,6 +428,9 @@ exit 0
 
 
 %changelog
+* Sat Jan 8 2022 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.12-100
+- Update to 1.8.12
+
 * Tue Dec 14 2021 Ivan Mironov <mironov.ivan@gmail.com> - 1:1.8.11-100
 - Update to 1.8.11
 
